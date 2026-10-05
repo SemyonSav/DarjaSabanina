@@ -30,8 +30,10 @@ export function Testimonials({ items }: { items: Testimonial[] }) {
         />
 
         <div className="relative mx-auto max-w-3xl">
-          <div className="min-h-[280px] overflow-hidden rounded-[1.75rem] border border-border bg-card p-8 shadow-soft md:p-12">
-            <Quote className="size-8 text-accent/70" />
+          <div className="min-h-[280px] overflow-hidden rounded-[1.75rem] border border-border bg-gradient-to-br from-card to-accent-soft/50 p-8 shadow-soft dark:to-accent-soft/30 md:p-12">
+            <span className="inline-flex size-12 items-center justify-center rounded-full bg-accent text-accent-foreground">
+              <Quote className="size-5" />
+            </span>
             <AnimatePresence mode="wait">
               <motion.div
                 key={current.id}

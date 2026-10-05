@@ -8,7 +8,7 @@ import { ContactForm } from "@/components/sections/ContactForm";
 
 export function Contact() {
   return (
-    <section id="contact" className="scroll-mt-24 py-20 md:py-28">
+    <section id="contact" className="scroll-mt-24 bg-gradient-to-b from-background to-sand/40 py-20 dark:to-muted/20 md:py-28">
       <Container>
         <SectionHeading
           eyebrow="Контакты"

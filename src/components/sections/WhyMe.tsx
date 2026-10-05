@@ -46,9 +46,11 @@ export function WhyMe() {
               <motion.article
                 key={item.id}
                 variants={fadeInUp}
-                className="rounded-[1.4rem] border border-border bg-card p-6 shadow-soft"
+                className="rounded-[1.4rem] border border-border border-t-2 border-t-accent/60 bg-card p-6 shadow-soft"
               >
-                <Icon className="size-6 text-accent" />
+                <span className="inline-flex size-12 items-center justify-center rounded-full bg-accent-soft text-accent">
+                  <Icon className="size-6" />
+                </span>
                 <h3 className="mt-4 font-display text-2xl font-medium">
                   {item.title}
                 </h3>
