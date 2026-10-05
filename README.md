@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Психолог — Landing
 
-## Getting Started
+Современный одностраничный сайт-визитка психолога с отдельными страницами статей.
 
-First, run the development server:
+## Стек
+
+- Next.js 15 (App Router)
+- React 19 + TypeScript
+- Tailwind CSS 4
+- Framer Motion
+- Lucide Icons
+- next-themes (Dark Mode)
+
+## Запуск
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Откройте [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Структура
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+  app/                 # страницы (главная, статьи, 404, политика)
+  components/
+    ui/                # кнопки, аккордеон, skeleton, loader...
+    layout/            # header, footer, providers
+    sections/          # секции лендинга
+    articles/          # контент статей
+    seo/               # Schema.org
+  lib/                 # site config, articles API, utils
+  types/               # TypeScript-типы
+content ready via lib/articles.ts
+```
 
-## Learn More
+## Контент
 
-To learn more about Next.js, take a look at the following resources:
+- Данные специалиста: `src/lib/site.ts`
+- Статьи: `src/lib/articles.ts` (CMS-ready слой `getArticles` / `getArticleBySlug`)
+- Фото: `public/avatar.jpg`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Сборка
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run build
+npm start
+```
 
-## Deploy on Vercel
+## Переменные окружения
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Скопируйте `.env.example` → `.env.local`:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+NEXT_PUBLIC_SITE_URL=https://your-domain.com
+```
