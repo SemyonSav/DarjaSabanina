@@ -14,6 +14,7 @@ import {
   updateArticle,
 } from "@/lib/repos";
 import { readingTimeMinutes } from "@/lib/content/text";
+import { renderContentHtml } from "@/lib/content/html";
 import {
   articleDraftSchema,
   articleInputSchema,
@@ -75,6 +76,7 @@ export async function saveArticle(
     ...data,
     status,
     readingTime: readingTimeMinutes(data.content),
+    contentHtml: renderContentHtml(data.content),
     publishedAt:
       status === "published"
         ? (existing?.publishedAt ?? new Date())

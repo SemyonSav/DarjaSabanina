@@ -6,10 +6,16 @@
  */
 import fs from "node:fs";
 import path from "node:path";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { db, dataDir } from "../src/lib/db";
-import { articles, categories, media, testimonials } from "../src/lib/db/schema";
+import {
+  articles,
+  categories,
+  media,
+  testimonials,
+} from "../src/lib/db/schema";
 import { legacyBlocksToTiptap } from "../src/lib/content/legacy";
+import { renderContentHtml } from "../src/lib/content/html";
 import { slugify } from "../src/lib/slug";
 import { legacyArticles, legacyTestimonials } from "./seed-data";
 
@@ -88,13 +94,15 @@ function seedArticles(categoryIds: Map<string, number>): number {
     if (exists) continue;
 
     const publishedAt = new Date(article.publishedAt);
+    const content = legacyBlocksToTiptap(article.content);
     db.insert(articles)
       .values({
         slug: article.slug,
         title: article.title,
         excerpt: article.excerpt,
         seoDescription: article.description,
-        content: legacyBlocksToTiptap(article.content),
+        content,
+        contentHtml: renderContentHtml(content),
         coverImageId: importCover(article.coverImage, article.coverAlt),
         categoryId: categoryIds.get(article.category) ?? null,
         status: "published",
@@ -115,10 +123,34 @@ function seedTestimonials(): number {
   if (hasAny) return 0;
   legacyTestimonials.forEach((t, index) => {
     db.insert(testimonials)
-      .values({ name: t.name, text: t.text, role: t.role ?? "", sortOrder: index })
+      .values({
+        name: t.name,
+        text: t.text,
+        role: t.role ?? "",
+        sortOrder: index,
+      })
       .run();
   });
   return legacyTestimonials.length;
+}
+
+/** HTML-кэш для статей, перенесённых до его появления */
+function backfillContentHtml(): number {
+  const rows = db
+    .select({ id: articles.id, content: articles.content })
+    .from(articles)
+    .where(eq(articles.contentHtml, ""))
+    .all();
+  for (const row of rows) {
+    db.update(articles)
+      .set({
+        contentHtml: renderContentHtml(row.content),
+        updatedAt: sql`updated_at`,
+      })
+      .where(eq(articles.id, row.id))
+      .run();
+  }
+  return rows.length;
 }
 
 const result = db.transaction(() => {
@@ -127,9 +159,10 @@ const result = db.transaction(() => {
     categories: categoryIds.size,
     articles: seedArticles(categoryIds),
     testimonials: seedTestimonials(),
+    backfilled: backfillContentHtml(),
   };
 });
 
 console.log(
-  `Готово: рубрик — ${result.categories}, новых статей — ${result.articles}, новых отзывов — ${result.testimonials}`,
+  `Готово: рубрик — ${result.categories}, новых статей — ${result.articles}, новых отзывов — ${result.testimonials}, обновлён HTML-кэш — ${result.backfilled}`,
 );
