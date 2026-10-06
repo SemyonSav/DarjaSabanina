@@ -138,3 +138,10 @@ export const articlesRelations = relations(articles, ({ one }) => ({
 export const categoriesRelations = relations(categories, ({ many }) => ({
   articles: many(articles),
 }));
+
+/** Редактируемые блоки главной и общие настройки сайта (JSON по ключу) */
+export const siteBlocks = sqliteTable("site_blocks", {
+  key: text("key").primaryKey(),
+  data: text("data", { mode: "json" }).$type<unknown>().notNull(),
+  updatedAt: timestamps.updatedAt,
+});
