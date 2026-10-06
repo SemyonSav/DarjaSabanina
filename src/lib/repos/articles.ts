@@ -9,8 +9,8 @@ import {
   type ArticleStatus,
   type NewArticleRow,
 } from "@/lib/db/schema";
-import type { Article } from "@/types";
-import { toArticle } from "./mappers";
+import type { Article, Category } from "@/types";
+import { toArticle, toCategory } from "./mappers";
 
 /** Поиск подстроки без учёта регистра, в том числе для кириллицы */
 function containsIgnoreCase(columns: SQLiteColumn[], query: string): SQL {
@@ -245,4 +245,23 @@ export async function getArticlePreview(id: number): Promise<Article | null> {
     cover: cover ?? null,
     ogImage: ogImage ?? null,
   });
+}
+
+/** Рубрики, в которых есть опубликованные статьи, с их количеством */
+export async function listCategoriesWithPublished(): Promise<
+  { category: Category; count: number }[]
+> {
+  const rows = await db
+    .select({ category: categories, count: count(articles.id) })
+    .from(categories)
+    .innerJoin(
+      articles,
+      and(eq(articles.categoryId, categories.id), isPublished),
+    )
+    .groupBy(categories.id)
+    .orderBy(asc(categories.sortOrder), asc(categories.name));
+  return rows.map((r) => ({
+    category: toCategory(r.category)!,
+    count: r.count,
+  }));
 }

@@ -11,6 +11,9 @@ export const SEO_LIMITS = {
 
 const optionalId = z.number().int().positive().nullable();
 
+/** Адреса внутри /articles/, занятые разделами сайта */
+const RESERVED_SLUGS = new Set(["category"]);
+
 export const articleInputSchema = z.object({
   title: z
     .string()
@@ -22,7 +25,8 @@ export const articleInputSchema = z.object({
     .trim()
     .min(1, "Укажите адрес статьи")
     .max(SLUG_MAX_LENGTH, `Не длиннее ${SLUG_MAX_LENGTH} символов`)
-    .regex(SLUG_PATTERN, "Только латиница в нижнем регистре, цифры и дефисы"),
+    .regex(SLUG_PATTERN, "Только латиница в нижнем регистре, цифры и дефисы")
+    .refine((slug) => !RESERVED_SLUGS.has(slug), "Этот адрес зарезервирован"),
   categoryId: optionalId,
   excerpt: z
     .string()

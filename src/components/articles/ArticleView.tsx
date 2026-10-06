@@ -1,7 +1,9 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Clock } from "lucide-react";
 import type { Article } from "@/types";
 import { formatDate } from "@/lib/utils";
+import { categoryPath } from "@/lib/paths";
 import { ButtonLink } from "@/components/ui/Button";
 import { ArticleContent } from "@/components/articles/ArticleContent";
 
@@ -9,9 +11,14 @@ import { ArticleContent } from "@/components/articles/ArticleContent";
 export function ArticleView({ article }: { article: Article }) {
   return (
     <article className="mx-auto max-w-3xl">
-      <p className="text-sm font-medium tracking-[0.12em] uppercase text-accent">
-        {article.category?.name}
-      </p>
+      {article.category ? (
+        <Link
+          href={categoryPath(article.category.slug)}
+          className="text-sm font-medium tracking-[0.12em] uppercase text-accent hover:underline"
+        >
+          {article.category.name}
+        </Link>
+      ) : null}
       <h1 className="mt-3 font-display text-4xl font-medium leading-tight md:text-5xl lg:text-6xl">
         {article.title}
       </h1>
