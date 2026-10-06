@@ -11,6 +11,8 @@ import {
 
 export interface LoginState {
   error?: string;
+  /** Введённый логин — форма после действия сбрасывается, возвращаем его */
+  login?: string;
 }
 
 /** Только внутренние адреса админки — защита от открытого редиректа */
@@ -34,20 +36,21 @@ export async function login(
   _prev: LoginState,
   formData: FormData,
 ): Promise<LoginState> {
+  const loginValue = String(formData.get("login") ?? "").trim();
   const ip = await clientIp();
   const blocked = loginBlockedMinutes(ip);
   if (blocked) {
     return {
       error: `Слишком много попыток. Попробуйте через ${blocked} мин.`,
+      login: loginValue,
     };
   }
 
-  const loginValue = String(formData.get("login") ?? "").trim();
   const password = String(formData.get("password") ?? "");
 
   if (!loginValue || !password || !(await checkCredentials(loginValue, password))) {
     registerLoginFailure(ip);
-    return { error: "Неверный логин или пароль" };
+    return { error: "Неверный логин или пароль", login: loginValue };
   }
 
   resetLoginFailures(ip);

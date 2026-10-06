@@ -46,3 +46,8 @@ next-env.d.ts
 
 # local data (SQLite database, uploads)
 /data/
+
+# tests
+/.tmp/
+/test-results/
+/playwright-report/

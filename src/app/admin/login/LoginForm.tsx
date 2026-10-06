@@ -20,6 +20,7 @@ export function LoginForm({ next }: { next?: string }) {
         <span className="text-sm text-muted-foreground">Логин</span>
         <input
           name="login"
+          defaultValue={state.login}
           required
           autoComplete="username"
           autoFocus

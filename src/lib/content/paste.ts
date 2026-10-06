@@ -4,7 +4,15 @@
  * здесь — то, что схема не исправит.
  */
 
-const JUNK_SELECTOR = "style, script, meta, link, title, xml, o\\:p, w\\:sdt";
+const JUNK_TAGS = new Set(["STYLE", "SCRIPT", "META", "LINK", "TITLE", "XML"]);
+
+/** Служебные теги и теги Word с пространством имён (o:p, w:sdt…) */
+function isJunk(element: Element): boolean {
+  return (
+    JUNK_TAGS.has(element.tagName.toUpperCase()) ||
+    element.tagName.includes(":")
+  );
+}
 
 function unwrap(element: Element) {
   element.replaceWith(...Array.from(element.childNodes));
@@ -44,7 +52,9 @@ export function cleanPastedHtml(html: string): string {
   const doc = new DOMParser().parseFromString(html, "text/html");
   const { body } = doc;
 
-  body.querySelectorAll(JUNK_SELECTOR).forEach((el) => el.remove());
+  Array.from(body.querySelectorAll("*"))
+    .filter(isJunk)
+    .forEach((el) => el.remove());
 
   // Комментарии Word (<!--[if gte mso 9]>…)
   const walker = doc.createTreeWalker(body, NodeFilter.SHOW_COMMENT);
