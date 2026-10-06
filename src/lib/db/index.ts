@@ -1,7 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
 import Database from "better-sqlite3";
-import { drizzle, type BetterSQLite3Database } from "drizzle-orm/better-sqlite3";
+import {
+  drizzle,
+  type BetterSQLite3Database,
+} from "drizzle-orm/better-sqlite3";
 import { dataDir } from "../data-dir";
 import * as schema from "./schema";
 
@@ -17,6 +20,10 @@ function createConnection() {
   sqlite.pragma("foreign_keys = ON");
   sqlite.pragma("busy_timeout = 5000");
   sqlite.pragma("synchronous = NORMAL");
+  // Встроенные LOWER/LIKE в SQLite не знают кириллицы: «Тревога» ≠ «тревога»
+  sqlite.function("unicode_lower", { deterministic: true }, (value) =>
+    typeof value === "string" ? value.toLocaleLowerCase("ru") : value,
+  );
   return sqlite;
 }
 

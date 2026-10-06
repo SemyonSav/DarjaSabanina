@@ -1,4 +1,5 @@
-import { and, asc, count, desc, eq, like, ne, or, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, ne, or, sql, type SQL } from "drizzle-orm";
+import type { SQLiteColumn } from "drizzle-orm/sqlite-core";
 import { db } from "@/lib/db";
 import { readingTimeMinutes } from "@/lib/content/text";
 import {
@@ -10,6 +11,18 @@ import {
 } from "@/lib/db/schema";
 import type { Article } from "@/types";
 import { toArticle } from "./mappers";
+
+/** Поиск подстроки без учёта регистра, в том числе для кириллицы */
+function containsIgnoreCase(columns: SQLiteColumn[], query: string): SQL {
+  // Символы % и _ в запросе ищем буквально
+  const escaped = query.toLocaleLowerCase("ru").replace(/[!%_]/g, "!$&");
+  const pattern = `%${escaped}%`;
+  return or(
+    ...columns.map(
+      (column) => sql`unicode_lower(${column}) like ${pattern} escape '!'`,
+    ),
+  )!;
+}
 
 const withRelations = { category: true, cover: true, ogImage: true } as const;
 
@@ -122,9 +135,8 @@ export async function listArticlesForAdmin(
 ): Promise<Article[]> {
   const conditions: SQL[] = [];
   if (filters.search) {
-    const pattern = `%${filters.search}%`;
     conditions.push(
-      or(like(articles.title, pattern), like(articles.slug, pattern))!,
+      containsIgnoreCase([articles.title, articles.slug], filters.search),
     );
   }
   if (filters.status) conditions.push(eq(articles.status, filters.status));

@@ -1,13 +1,20 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
-import { EditorContent, useEditor, type Editor } from "@tiptap/react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  EditorContent,
+  useEditor,
+  useEditorState,
+  type Editor,
+} from "@tiptap/react";
+import { Extension, type JSONContent } from "@tiptap/core";
 import { Placeholder } from "@tiptap/extensions";
-import type { JSONContent } from "@tiptap/core";
+import { Link2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getContentExtensions } from "@/lib/content/extensions";
-import { Toolbar } from "./Toolbar";
+import { Toolbar, ToolbarButton } from "./Toolbar";
 import { SelectionMenu } from "./SelectionMenu";
+import { LinkDialog } from "./LinkDialog";
 
 /**
  * Обычный JSON-клон документа. ProseMirror создаёт attrs без прототипа
@@ -17,6 +24,22 @@ import { SelectionMenu } from "./SelectionMenu";
 export function toPlainJSON(editor: Editor): JSONContent {
   return JSON.parse(JSON.stringify(editor.getJSON())) as JSONContent;
 }
+
+/** Горячие клавиши, которые открывают диалоги редактора */
+const DialogShortcuts = Extension.create<{ onLink: () => void }>({
+  name: "dialogShortcuts",
+  addOptions() {
+    return { onLink: () => {} };
+  },
+  addKeyboardShortcuts() {
+    return {
+      "Mod-k": () => {
+        this.options.onLink();
+        return true;
+      },
+    };
+  },
+});
 
 export interface RichTextEditorProps {
   value: JSONContent;
@@ -28,12 +51,22 @@ export interface RichTextEditorProps {
   onReady?: (normalized: JSONContent) => void;
   placeholder?: string;
   invalid?: boolean;
-  /** Дополнительные кнопки панели инструментов (ссылка, картинка) */
-  toolbarExtras?: (editor: Editor) => React.ReactNode;
-  /** Дополнительные кнопки меню над выделением */
-  selectionExtras?: (editor: Editor) => React.ReactNode;
-  /** Диалоги и прочие элементы, которым нужен редактор */
-  children?: (editor: Editor) => React.ReactNode;
+}
+
+function LinkButton({ editor, onClick }: { editor: Editor; onClick: () => void }) {
+  const active = useEditorState({
+    editor,
+    selector: ({ editor: e }) => e.isActive("link"),
+  });
+  return (
+    <ToolbarButton
+      icon={Link2}
+      label="Ссылка"
+      shortcut="Mod+K"
+      active={active}
+      onClick={onClick}
+    />
+  );
 }
 
 /**
@@ -46,12 +79,16 @@ export function RichTextEditor({
   onReady,
   placeholder = "Начните писать статью…",
   invalid,
-  toolbarExtras,
-  selectionExtras,
-  children,
 }: RichTextEditorProps) {
+  const [linkOpen, setLinkOpen] = useState(false);
+  const openLink = useRef(() => setLinkOpen(true));
+
   const extensions = useMemo(
-    () => [...getContentExtensions(), Placeholder.configure({ placeholder })],
+    () => [
+      ...getContentExtensions(),
+      Placeholder.configure({ placeholder }),
+      DialogShortcuts.configure({ onLink: () => openLink.current() }),
+    ],
     [placeholder],
   );
 
@@ -87,11 +124,17 @@ export function RichTextEditor({
     >
       {editor ? (
         <>
-          <Toolbar editor={editor}>{toolbarExtras?.(editor)}</Toolbar>
+          <Toolbar editor={editor}>
+            <LinkButton editor={editor} onClick={() => setLinkOpen(true)} />
+          </Toolbar>
           <SelectionMenu editor={editor}>
-            {selectionExtras?.(editor)}
+            <LinkButton editor={editor} onClick={() => setLinkOpen(true)} />
           </SelectionMenu>
-          {children?.(editor)}
+          <LinkDialog
+            editor={editor}
+            open={linkOpen}
+            onClose={() => setLinkOpen(false)}
+          />
         </>
       ) : (
         <div className="h-[49px] rounded-t-[0.9rem] border-b border-border bg-card" />

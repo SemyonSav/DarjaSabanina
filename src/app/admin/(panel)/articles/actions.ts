@@ -8,6 +8,7 @@ import {
   deleteArticle,
   getArticleRowById,
   isArticleSlugTaken,
+  listArticlesForAdmin,
   removeRedirectFrom,
   removeRedirectsTo,
   updateArticle,
@@ -143,4 +144,17 @@ export async function discardAutosave(id: number): Promise<void> {
     autosavedAt: null,
     updatedAt: existing.updatedAt,
   });
+}
+
+/** Опубликованные статьи для внутренней ссылки из редактора */
+export async function searchArticlesForLink(
+  query: string,
+): Promise<{ title: string; slug: string }[]> {
+  await requireAdmin();
+  const articles = await listArticlesForAdmin({
+    search: query.trim().slice(0, 100) || undefined,
+    status: "published",
+    sort: "published",
+  });
+  return articles.slice(0, 8).map(({ title, slug }) => ({ title, slug }));
 }
