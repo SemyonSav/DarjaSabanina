@@ -1,11 +1,6 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Manrope } from "next/font/google";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
 import { Providers } from "@/components/layout/Providers";
-import { MobileStickyCta } from "@/components/layout/MobileStickyCta";
-import { ScrollToTop } from "@/components/ui/ScrollToTop";
-import { PersonJsonLd } from "@/components/seo/PersonJsonLd";
 import { siteConfig } from "@/lib/site";
 import "./globals.css";
 
@@ -72,14 +67,7 @@ export default function RootLayout({
       <body
         className={`${manrope.variable} ${cormorant.variable} min-h-screen bg-background font-sans text-foreground antialiased`}
       >
-        <Providers>
-          <PersonJsonLd />
-          <Header />
-          <main className="pb-20 md:pb-0">{children}</main>
-          <Footer />
-          <MobileStickyCta />
-          <ScrollToTop />
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

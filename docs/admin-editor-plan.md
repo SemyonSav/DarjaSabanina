@@ -32,11 +32,11 @@
 
 ## 1. Фундамент
 
-- [ ] **1.1. Окружение для разработки**
+- [x] **1.1. Окружение для разработки**
   `.env.example` (`DATA_DIR`, `ADMIN_LOGIN`, `ADMIN_PASSWORD_HASH`, `AUTH_SECRET`, `NEXT_PUBLIC_SITE_URL`), папка `data/` в `.gitignore`, скрипты `db:generate`, `db:migrate`, `db:seed`, `db:studio` в `package.json`.
   Коммит: `Добавить пример env и папку данных`
 
-- [ ] **1.2. Drizzle ORM и схема БД (SQLite)**
+- [x] **1.2. Drizzle ORM и схема БД (SQLite)**
   Подключение `better-sqlite3` с `PRAGMA journal_mode=WAL`, `foreign_keys=ON`, `busy_timeout`; один экземпляр соединения на процесс. JSON-поля — `text` с режимом `json` в Drizzle, даты — ISO-строки или unix-время, булевы — `integer` (boolean mode).
   Таблицы:
   - `articles`: id, slug (unique), title, excerpt, content (JSON — документ Tiptap), content_html (кэш отрендеренного HTML), cover_image_id, category_id, status (`draft` | `published`), featured, reading_time, seo_title, seo_description, focus_keyword, keywords (JSON-массив строк), og_image_id, canonical_url, noindex, published_at, updated_at, created_at
@@ -48,15 +48,15 @@
   Первая миграция.
   Коммит: `Подключить Drizzle ORM и описать схему БД`
 
-- [ ] **1.3. Слой доступа к данным**
+- [x] **1.3. Слой доступа к данным**
   `src/lib/db/*` и репозитории: `articlesRepo`, `categoriesRepo`, `testimonialsRepo`, `mediaRepo`, `redirectsRepo`. Публичные функции (`getArticles`, `getArticleBySlug`, …) сохраняют текущие сигнатуры из `lib/cms.ts`, отдают только `published`.
   Коммит: `Добавить репозитории для статей, рубрик, отзывов и медиа`
 
-- [ ] **1.4. Сид: перенос текущих статей, рубрик и отзывов**
+- [x] **1.4. Сид: перенос текущих статей, рубрик и отзывов**
   Скрипт `scripts/seed.ts`: конвертирует блоки `ArticleBlock[]` из `lib/articles.ts` в документ Tiptap, переносит рубрики (из union-типа `ArticleCategory`), отзывы и обложки (из `public/images/articles` → `media`). Идемпотентный (повторный запуск не дублирует).
   Коммит: `Перенести существующие статьи и отзывы в БД`
 
-- [ ] **1.5. Публичная часть читает из БД**
+- [x] **1.5. Публичная часть читает из БД**
   Страницы `/`, `/articles`, `/articles/[slug]`, sitemap — на данных из БД, рендер на каждый запрос (`force-dynamic`): база не нужна на этапе сборки Docker-образа, изменения из админки видны сразу, а чтение из SQLite занимает доли миллисекунды. Повторные запросы в рамках рендера убирает React `cache`. Тело статьи рендерится на сервере из документа Tiptap (`@tiptap/static-renderer`). Отдача загруженных файлов по `/uploads/*`. Удалены `loading.tsx`: из-за потоковой отдачи несуществующие страницы отвечали 200 вместо 404 (мягкий 404 вредит индексации). Статический массив статей перенесён в `scripts/seed-data.ts`.
   Коммит: `Перевести публичные страницы на данные из БД`
 
@@ -64,7 +64,7 @@
 
 ## 2. Авторизация и каркас админки
 
-- [ ] **2.1. Вход администратора**
+- [x] **2.1. Вход администратора**
   Страница `/admin/login`, server action проверки пароля (bcrypt), JWT-cookie (`httpOnly`, `secure`, `sameSite=lax`), `middleware.ts` защищает `/admin/*` и `/api/admin/*`. Ограничение попыток входа (rate limit по IP в памяти/БД). Скрипт `scripts/hash-password.ts` для генерации хеша.
   Коммит: `Добавить вход администратора и защиту /admin`
 
