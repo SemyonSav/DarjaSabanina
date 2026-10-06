@@ -27,7 +27,10 @@ export const articleInputSchema = z.object({
   excerpt: z
     .string()
     .trim()
-    .max(SEO_LIMITS.excerpt.max, `Не длиннее ${SEO_LIMITS.excerpt.max} символов`),
+    .max(
+      SEO_LIMITS.excerpt.max,
+      `Не длиннее ${SEO_LIMITS.excerpt.max} символов`,
+    ),
   content: z.custom<JSONContent>(
     (value) =>
       typeof value === "object" &&

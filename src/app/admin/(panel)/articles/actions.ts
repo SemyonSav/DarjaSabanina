@@ -15,6 +15,7 @@ import {
 } from "@/lib/repos";
 import { readingTimeMinutes } from "@/lib/content/text";
 import { renderContentHtml } from "@/lib/content/html";
+import { articlePath } from "@/lib/paths";
 import {
   articleDraftSchema,
   articleInputSchema,
@@ -28,8 +29,6 @@ export type SaveIntent = "save" | "publish" | "unpublish";
 export type SaveResult =
   | { ok: true; id: number }
   | { ok: false; message: string; errors?: FieldErrors };
-
-const articlePath = (slug: string) => `/articles/${slug}`;
 
 function refreshPages() {
   // Публичные страницы рендерятся на каждый запрос; сбрасываем клиентский кэш
