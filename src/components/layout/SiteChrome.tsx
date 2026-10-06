@@ -3,6 +3,7 @@ import { Footer } from "@/components/layout/Footer";
 import { MobileStickyCta } from "@/components/layout/MobileStickyCta";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { YandexMetrika } from "@/components/analytics/YandexMetrika";
 import { graph, personSchema, websiteSchema } from "@/lib/seo/jsonld";
 
 /** Шапка, подвал и общие элементы публичной части сайта */
@@ -15,6 +16,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
       <Footer />
       <MobileStickyCta />
       <ScrollToTop />
+      <YandexMetrika />
     </>
   );
 }
