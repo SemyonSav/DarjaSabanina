@@ -9,12 +9,14 @@ import {
 } from "@tiptap/react";
 import { Extension, type JSONContent } from "@tiptap/core";
 import { Placeholder } from "@tiptap/extensions";
-import { Link2 } from "lucide-react";
+import { ImagePlus, Link2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getContentExtensions } from "@/lib/content/extensions";
 import { Toolbar, ToolbarButton } from "./Toolbar";
 import { SelectionMenu } from "./SelectionMenu";
 import { LinkDialog } from "./LinkDialog";
+import { ImageDialog, type ImageDialogRequest } from "./ImageDialog";
+import { imageFilesFrom } from "@/components/admin/media/uploadImage";
 
 /**
  * Обычный JSON-клон документа. ProseMirror создаёт attrs без прототипа
@@ -69,6 +71,27 @@ function LinkButton({ editor, onClick }: { editor: Editor; onClick: () => void }
   );
 }
 
+function ImageButton({
+  editor,
+  onClick,
+}: {
+  editor: Editor;
+  onClick: (edit: boolean) => void;
+}) {
+  const selected = useEditorState({
+    editor,
+    selector: ({ editor: e }) => e.isActive("image"),
+  });
+  return (
+    <ToolbarButton
+      icon={ImagePlus}
+      label={selected ? "Изменить изображение" : "Изображение"}
+      active={selected}
+      onClick={() => onClick(selected)}
+    />
+  );
+}
+
 /**
  * WYSIWYG-редактор статьи. Набор узлов совпадает с рендером на сайте
  * (getContentExtensions), стили контента — те же `.prose-article`.
@@ -82,6 +105,9 @@ export function RichTextEditor({
 }: RichTextEditorProps) {
   const [linkOpen, setLinkOpen] = useState(false);
   const openLink = useRef(() => setLinkOpen(true));
+  const [imageRequest, setImageRequest] = useState<ImageDialogRequest | null>(
+    null,
+  );
 
   const extensions = useMemo(
     () => [
@@ -101,6 +127,30 @@ export function RichTextEditor({
         class:
           "prose-article tiptap-content min-h-[24rem] px-5 py-4 outline-none md:px-8 md:py-6",
         "aria-label": "Текст статьи",
+      },
+      // Картинку, брошенную в текст, сначала загружаем и просим описать
+      handleDrop: (view, event, _slice, moved) => {
+        const [file] = imageFilesFrom(event.dataTransfer?.files);
+        if (moved || !file) return false;
+        event.preventDefault();
+        const position = view.posAtCoords({
+          left: event.clientX,
+          top: event.clientY,
+        })?.pos;
+        setImageRequest({ file, position });
+        return true;
+      },
+      handlePaste: (_view, event) => {
+        const [file] = imageFilesFrom(event.clipboardData?.files);
+        if (!file) return false;
+        event.preventDefault();
+        setImageRequest({ file });
+        return true;
+      },
+      handleDoubleClickOn: (_view, _pos, node) => {
+        if (node.type.name !== "image") return false;
+        setImageRequest({ edit: true });
+        return true;
       },
     },
     onCreate: ({ editor }) => onReady?.(toPlainJSON(editor)),
@@ -126,6 +176,10 @@ export function RichTextEditor({
         <>
           <Toolbar editor={editor}>
             <LinkButton editor={editor} onClick={() => setLinkOpen(true)} />
+            <ImageButton
+              editor={editor}
+              onClick={(edit) => setImageRequest(edit ? { edit } : {})}
+            />
           </Toolbar>
           <SelectionMenu editor={editor}>
             <LinkButton editor={editor} onClick={() => setLinkOpen(true)} />
@@ -134,6 +188,11 @@ export function RichTextEditor({
             editor={editor}
             open={linkOpen}
             onClose={() => setLinkOpen(false)}
+          />
+          <ImageDialog
+            editor={editor}
+            request={imageRequest}
+            onClose={() => setImageRequest(null)}
           />
         </>
       ) : (

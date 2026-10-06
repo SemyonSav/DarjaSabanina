@@ -211,3 +211,26 @@ body {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
+
+.prose-article figure {
+  margin: 2rem 0;
+}
+
+.prose-article figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 1.25rem;
+  background: var(--sand);
+}
+
+.prose-article figcaption {
+  margin-top: 0.75rem;
+  text-align: center;
+  font-size: 0.9375rem;
+  color: var(--muted-foreground);
+}
+
+.tiptap-content figure {
+  cursor: grab;
+}
