@@ -9,6 +9,13 @@ import { FAQ } from "@/components/sections/FAQ";
 import { Contact } from "@/components/sections/Contact";
 import { getFeaturedArticles, getTestimonials } from "@/lib/cms";
 import { toArticleSummary } from "@/types";
+import type { Metadata } from "next";
+
+// canonical задаётся каждой странице отдельно: в корневом layout он
+// унаследовался бы всеми страницами и склеил бы их с главной
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 // Данные из БД: страница рендерится на каждый запрос
 export const dynamic = "force-dynamic";

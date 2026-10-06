@@ -6,6 +6,7 @@ import { ButtonLink } from "@/components/ui/Button";
 export const metadata: Metadata = {
   title: "Политика конфиденциальности",
   description: `Политика конфиденциальности сайта ${siteConfig.name}.`,
+  alternates: { canonical: "/privacy" },
 };
 
 export default function PrivacyPage() {

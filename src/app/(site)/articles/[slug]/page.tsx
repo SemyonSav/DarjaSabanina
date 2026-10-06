@@ -6,6 +6,7 @@ import { Container } from "@/components/ui/Container";
 import { getArticleBySlug, getRelatedArticles } from "@/lib/cms";
 import { toArticleSummary } from "@/types";
 import { siteConfig } from "@/lib/site";
+import { buildArticleMetadata } from "@/lib/seo/article";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -20,20 +21,7 @@ export async function generateMetadata({
   const article = await getArticleBySlug(slug);
   if (!article) return {};
 
-  return {
-    title: article.title,
-    description: article.description,
-    openGraph: {
-      title: article.title,
-      description: article.description,
-      type: "article",
-      publishedTime: article.publishedAt ?? undefined,
-      modifiedTime: article.updatedAt,
-      images: article.cover
-        ? [{ url: article.cover.url, alt: article.cover.alt }]
-        : undefined,
-    },
-  };
+  return buildArticleMetadata(article);
 }
 
 export default async function ArticlePage({ params }: PageProps) {

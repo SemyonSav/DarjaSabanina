@@ -159,7 +159,7 @@
 
 ## 7. SEO
 
-- [ ] **7.1. Метаданные статьи**
+- [x] **7.1. Метаданные статьи**
   `generateMetadata`: seo_title (fallback — title) с шаблоном `%s — Дарья Сабанина`, description, keywords, canonical (абсолютный), robots (noindex), Open Graph (`article:published_time`, `modified_time`, `section`), Twitter card, OG-картинка 1200×630.
   Коммит: `Расширить метаданные статей`
 
