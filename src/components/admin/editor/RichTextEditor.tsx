@@ -12,6 +12,7 @@ import { Placeholder } from "@tiptap/extensions";
 import { ImagePlus, Link2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getContentExtensions } from "@/lib/content/extensions";
+import { cleanPastedHtml } from "@/lib/content/paste";
 import { Toolbar, ToolbarButton } from "./Toolbar";
 import { SelectionMenu } from "./SelectionMenu";
 import { LinkDialog } from "./LinkDialog";
@@ -140,6 +141,7 @@ export function RichTextEditor({
         setImageRequest({ file, position });
         return true;
       },
+      transformPastedHTML: cleanPastedHtml,
       handlePaste: (_view, event) => {
         const [file] = imageFilesFrom(event.clipboardData?.files);
         if (!file) return false;
