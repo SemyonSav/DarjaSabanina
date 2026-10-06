@@ -11,6 +11,7 @@ import {
   Image as ImageIcon,
   LayoutTemplate,
   LogOut,
+  Settings,
   Menu,
   MessageSquareQuote,
   X,
@@ -32,6 +33,7 @@ const navLinks: NavLink[] = [
   { href: "/admin/categories", label: "Рубрики", icon: FolderTree },
   { href: "/admin/testimonials", label: "Отзывы", icon: MessageSquareQuote },
   { href: "/admin/media", label: "Медиатека", icon: ImageIcon },
+  { href: "/admin/settings", label: "Настройки сайта", icon: Settings },
   { href: "/admin/seo-guide", label: "Справка по SEO", icon: BookOpen },
 ];
 
