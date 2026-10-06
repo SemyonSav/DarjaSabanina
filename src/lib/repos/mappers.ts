@@ -1,8 +1,9 @@
 import type { ArticleRow, CategoryRow, MediaRow } from "@/lib/db/schema";
 import type { Article, Category, MediaImage } from "@/types";
+import { storage } from "@/lib/storage";
 
 export function mediaUrl(path: string): string {
-  return `/uploads/${path}`;
+  return storage.url(path);
 }
 
 export function toMediaImage(
