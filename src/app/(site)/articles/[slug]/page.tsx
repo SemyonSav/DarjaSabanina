@@ -6,6 +6,8 @@ import { Container } from "@/components/ui/Container";
 import { getArticleBySlug, getRelatedArticles } from "@/lib/cms";
 import { toArticleSummary } from "@/types";
 import { buildArticleMetadata } from "@/lib/seo/article";
+import { redirectIfMoved } from "@/lib/redirects";
+import { articlePath } from "@/lib/paths";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import {
@@ -35,7 +37,10 @@ export default async function ArticlePage({ params }: PageProps) {
   const { slug } = await params;
   const article = await getArticleBySlug(slug);
 
-  if (!article) notFound();
+  if (!article) {
+    await redirectIfMoved(articlePath(slug));
+    notFound();
+  }
 
   const related = await getRelatedArticles(article, 3);
 

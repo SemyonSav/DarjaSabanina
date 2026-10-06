@@ -111,16 +111,6 @@ export async function listRelatedArticles(
     .map(toArticle);
 }
 
-export async function listPublishedSlugs(): Promise<
-  { slug: string; updatedAt: Date }[]
-> {
-  return db
-    .select({ slug: articles.slug, updatedAt: articles.updatedAt })
-    .from(articles)
-    .where(isPublished)
-    .orderBy(...newestFirst);
-}
-
 // ——— Админка ———
 
 export type AdminArticleSort = "updated" | "published" | "title";
@@ -264,4 +254,22 @@ export async function listCategoriesWithPublished(): Promise<
     category: toCategory(r.category)!,
     count: r.count,
   }));
+}
+
+/** Данные для sitemap: индексируемые опубликованные статьи */
+export async function listArticlesForSitemap() {
+  const rows = await db.query.articles.findMany({
+    columns: {
+      slug: true,
+      updatedAt: true,
+      noindex: true,
+      canonicalUrl: true,
+      categoryId: true,
+    },
+    with: { cover: { columns: { path: true } } },
+    where: isPublished,
+    orderBy: newestFirst,
+  });
+  // noindex и статьи-копии (canonical на другой адрес) в sitemap не нужны
+  return rows.filter((row) => !row.noindex && !row.canonicalUrl);
 }

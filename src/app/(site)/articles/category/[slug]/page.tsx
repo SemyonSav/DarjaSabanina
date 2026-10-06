@@ -13,6 +13,7 @@ import {
   getCategoryBySlug,
 } from "@/lib/cms";
 import { categoryPath } from "@/lib/paths";
+import { redirectIfMoved } from "@/lib/redirects";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { breadcrumbSchema, categoryCrumbs } from "@/lib/seo/jsonld";
@@ -55,8 +56,12 @@ export default async function CategoryPage({
   params,
   searchParams,
 }: PageProps) {
-  const category = await getCategoryBySlug((await params).slug);
-  if (!category) notFound();
+  const { slug } = await params;
+  const category = await getCategoryBySlug(slug);
+  if (!category) {
+    await redirectIfMoved(categoryPath(slug));
+    notFound();
+  }
   const rawPage = (await searchParams).page;
   redirectFirstPage(rawPage, categoryPath(category.slug));
   const page = parsePage(rawPage);
