@@ -41,7 +41,11 @@ function AltEditor({ item }: { item: MediaItem }) {
         className="h-8 w-full rounded-[0.6rem] border border-border bg-background px-2 text-xs text-foreground outline-none focus:border-accent"
       />
       <span className="mt-0.5 block h-4 text-[11px]">
-        {state === "saving" ? "Сохранение…" : state === "saved" ? "Сохранено" : ""}
+        {state === "saving"
+          ? "Сохранение…"
+          : state === "saved"
+            ? "Сохранено"
+            : ""}
       </span>
     </label>
   );

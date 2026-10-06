@@ -9,7 +9,10 @@ export async function uploadImage(file: File, alt = ""): Promise<MediaImage> {
   form.append("file", file);
   form.append("alt", alt);
 
-  const response = await fetch("/api/admin/media", { method: "POST", body: form });
+  const response = await fetch("/api/admin/media", {
+    method: "POST",
+    body: form,
+  });
   const data = (await response.json().catch(() => ({}))) as {
     media?: MediaImage;
     error?: string;
@@ -21,5 +24,7 @@ export async function uploadImage(file: File, alt = ""): Promise<MediaImage> {
 }
 
 export function imageFilesFrom(list: FileList | null | undefined): File[] {
-  return Array.from(list ?? []).filter((file) => file.type.startsWith("image/"));
+  return Array.from(list ?? []).filter((file) =>
+    file.type.startsWith("image/"),
+  );
 }

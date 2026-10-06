@@ -13,6 +13,8 @@ import {
   getCategoryBySlug,
 } from "@/lib/cms";
 import { categoryPath } from "@/lib/paths";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbSchema, categoryCrumbs } from "@/lib/seo/jsonld";
 
 export const dynamic = "force-dynamic";
 
@@ -65,6 +67,12 @@ export default async function CategoryPage({
 
   return (
     <Container className="py-16 md:py-24">
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          ...breadcrumbSchema(categoryCrumbs(category)),
+        }}
+      />
       <ArticleListing
         eyebrow="Рубрика"
         title={category.name}

@@ -33,7 +33,9 @@ export function UploadButton({
       try {
         await uploadImage(file);
       } catch (e) {
-        failed.push(`${file.name}: ${e instanceof Error ? e.message : "ошибка"}`);
+        failed.push(
+          `${file.name}: ${e instanceof Error ? e.message : "ошибка"}`,
+        );
       }
     }
     setProgress(null);
@@ -69,7 +71,10 @@ export function UploadButton({
         }}
       />
       {errors.length ? (
-        <ul role="alert" className="mt-2 space-y-1 text-sm text-red-700 dark:text-red-400">
+        <ul
+          role="alert"
+          className="mt-2 space-y-1 text-sm text-red-700 dark:text-red-400"
+        >
           {errors.map((error) => (
             <li key={error}>{error}</li>
           ))}
@@ -100,7 +105,9 @@ export function MediaGrid({
             key={item.id}
             className={cn(
               "overflow-hidden rounded-[1rem] border bg-card shadow-soft",
-              selected ? "border-accent ring-2 ring-accent/30" : "border-border",
+              selected
+                ? "border-accent ring-2 ring-accent/30"
+                : "border-border",
             )}
           >
             <button
@@ -108,7 +115,11 @@ export function MediaGrid({
               disabled={!onSelect}
               onClick={() => onSelect?.(item)}
               className="relative block w-full bg-sand disabled:cursor-default"
-              aria-label={onSelect ? `Выбрать: ${item.alt || item.originalName}` : undefined}
+              aria-label={
+                onSelect
+                  ? `Выбрать: ${item.alt || item.originalName}`
+                  : undefined
+              }
             >
               <img
                 src={item.url}
@@ -126,7 +137,9 @@ export function MediaGrid({
               <p
                 className={cn(
                   "truncate text-sm",
-                  item.alt ? "text-foreground" : "text-amber-700 dark:text-amber-400",
+                  item.alt
+                    ? "text-foreground"
+                    : "text-amber-700 dark:text-amber-400",
                 )}
                 title={item.alt}
               >

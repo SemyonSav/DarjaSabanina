@@ -10,6 +10,9 @@ import { Contact } from "@/components/sections/Contact";
 import { getFeaturedArticles, getTestimonials } from "@/lib/cms";
 import { toArticleSummary } from "@/types";
 import type { Metadata } from "next";
+import { faqs } from "@/lib/site";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { faqSchema, graph, professionalServiceSchema } from "@/lib/seo/jsonld";
 
 // canonical задаётся каждой странице отдельно: в корневом layout он
 // унаследовался бы всеми страницами и склеил бы их с главной
@@ -28,6 +31,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <JsonLd data={graph(professionalServiceSchema(), faqSchema(faqs))} />
       <Hero />
       <Requests />
       <Constellations />

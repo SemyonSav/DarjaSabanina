@@ -8,6 +8,8 @@ import {
   redirectFirstPage,
 } from "@/components/articles/ArticleListing";
 import { getArticlesPage, getCategoriesWithArticles } from "@/lib/cms";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { articlesCrumbs, breadcrumbSchema } from "@/lib/seo/jsonld";
 
 export const dynamic = "force-dynamic";
 
@@ -43,6 +45,12 @@ export default async function ArticlesPage({ searchParams }: PageProps) {
 
   return (
     <Container className="py-16 md:py-24">
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          ...breadcrumbSchema(articlesCrumbs()),
+        }}
+      />
       <ArticleListing
         eyebrow="Блог"
         title="Статьи"

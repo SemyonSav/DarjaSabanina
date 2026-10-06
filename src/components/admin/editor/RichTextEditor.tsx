@@ -56,7 +56,13 @@ export interface RichTextEditorProps {
   invalid?: boolean;
 }
 
-function LinkButton({ editor, onClick }: { editor: Editor; onClick: () => void }) {
+function LinkButton({
+  editor,
+  onClick,
+}: {
+  editor: Editor;
+  onClick: () => void;
+}) {
   const active = useEditorState({
     editor,
     selector: ({ editor: e }) => e.isActive("link"),

@@ -121,7 +121,10 @@ export function ImageDialog({
       className="m-auto w-[min(34rem,calc(100vw-2rem))] rounded-[1.25rem] border border-border bg-card p-0 text-foreground shadow-soft backdrop:bg-black/30"
     >
       <form onSubmit={apply} className="space-y-4 p-5 md:p-6">
-        <h2 id="image-dialog-title" className="font-display text-2xl font-medium">
+        <h2
+          id="image-dialog-title"
+          className="font-display text-2xl font-medium"
+        >
           {request?.edit ? "Изображение" : "Вставить изображение"}
         </h2>
 

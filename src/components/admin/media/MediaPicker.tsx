@@ -50,7 +50,10 @@ export function MediaPicker({
       className="m-auto max-h-[85vh] w-[min(56rem,calc(100vw-2rem))] rounded-[1.25rem] border border-border bg-card p-0 text-foreground shadow-soft backdrop:bg-black/30"
     >
       <div className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-3 border-b border-border bg-card px-5 py-4">
-        <h2 id="media-picker-title" className="font-display text-2xl font-medium">
+        <h2
+          id="media-picker-title"
+          className="font-display text-2xl font-medium"
+        >
           Медиатека
         </h2>
         <div className="flex items-center gap-2">

@@ -16,7 +16,8 @@ export function CharCounter({
 }) {
   const length = value.trim().length;
   const tooLong = length > limits.max;
-  const tooShort = limits.min !== undefined && length > 0 && length < limits.min;
+  const tooShort =
+    limits.min !== undefined && length > 0 && length < limits.min;
   const ok = length > 0 && !tooLong && !tooShort;
 
   return (
@@ -28,7 +29,9 @@ export function CharCounter({
       )}
     >
       {length}
-      {limits.min !== undefined ? ` (рекомендуется ${limits.min}–${limits.max})` : ` / ${limits.max}`}
+      {limits.min !== undefined
+        ? ` (рекомендуется ${limits.min}–${limits.max})`
+        : ` / ${limits.max}`}
     </span>
   );
 }

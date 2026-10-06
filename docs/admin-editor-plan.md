@@ -163,7 +163,7 @@
   `generateMetadata`: seo_title (fallback — title) с шаблоном `%s — Дарья Сабанина`, description, keywords, canonical (абсолютный), robots (noindex), Open Graph (`article:published_time`, `modified_time`, `section`), Twitter card, OG-картинка 1200×630.
   Коммит: `Расширить метаданные статей`
 
-- [ ] **7.2. Микроразметка**
+- [x] **7.2. Микроразметка**
   JSON-LD: `BlogPosting` (headline, description, image, datePublished, dateModified, author → Person, publisher, mainEntityOfPage, keywords, articleSection), `BreadcrumbList` на статье и рубрике, `Person`/`ProfessionalService` на главной, `FAQPage` для блока FAQ.
   Коммит: `Добавить микроразметку Schema.org`
 

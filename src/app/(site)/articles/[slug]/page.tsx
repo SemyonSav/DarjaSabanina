@@ -5,8 +5,14 @@ import { ArticleView } from "@/components/articles/ArticleView";
 import { Container } from "@/components/ui/Container";
 import { getArticleBySlug, getRelatedArticles } from "@/lib/cms";
 import { toArticleSummary } from "@/types";
-import { siteConfig } from "@/lib/site";
 import { buildArticleMetadata } from "@/lib/seo/article";
+import { JsonLd } from "@/components/seo/JsonLd";
+import {
+  articleCrumbs,
+  blogPostingSchema,
+  breadcrumbSchema,
+  graph,
+} from "@/lib/seo/jsonld";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -32,25 +38,13 @@ export default async function ArticlePage({ params }: PageProps) {
 
   const related = await getRelatedArticles(article, 3);
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: article.title,
-    description: article.description,
-    image: article.cover ? `${siteConfig.url}${article.cover.url}` : undefined,
-    datePublished: article.publishedAt,
-    dateModified: article.updatedAt,
-    author: {
-      "@type": "Person",
-      name: siteConfig.name,
-    },
-  };
-
   return (
     <Container className="py-14 md:py-20">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      <JsonLd
+        data={graph(
+          blogPostingSchema(article),
+          breadcrumbSchema(articleCrumbs(article)),
+        )}
       />
 
       <ArticleView article={article} />
