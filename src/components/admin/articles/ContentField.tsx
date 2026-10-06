@@ -1,24 +1,36 @@
 "use client";
 
 import type { JSONContent } from "@tiptap/core";
+import { RichTextEditor } from "@/components/admin/editor/RichTextEditor";
 
-/** Текст статьи. Редактор подключается в задаче 4.1 */
 export function ContentField({
+  value,
+  onChange,
+  onReady,
   error,
 }: {
   value: JSONContent;
   onChange: (value: JSONContent) => void;
+  onReady?: (value: JSONContent) => void;
   error?: string;
 }) {
   return (
     <div className="space-y-1.5">
       <p className="text-sm font-medium">Текст статьи</p>
-      <div className="rounded-[0.9rem] border border-dashed border-border px-4 py-10 text-center text-sm text-muted-foreground">
-        Редактор текста появится на следующем этапе.
-      </div>
+      <RichTextEditor
+        value={value}
+        onChange={onChange}
+        onReady={onReady}
+        invalid={Boolean(error)}
+      />
       {error ? (
         <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
-      ) : null}
+      ) : (
+        <p className="text-xs text-muted-foreground">
+          Заголовок статьи (H1) задаётся выше — в тексте используйте
+          подзаголовки H2–H4.
+        </p>
+      )}
     </div>
   );
 }

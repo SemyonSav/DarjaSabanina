@@ -159,6 +159,20 @@ export function ArticleForm({
     enabled: !restoreCandidate,
   });
 
+  function onEditorReady(normalized: JSONContent) {
+    const initialSnapshot = snapshotOf(initial.values);
+    if (baseline !== initialSnapshot) return;
+    const normalizedValues = { ...initial.values, content: normalized };
+    const nextBaseline = snapshotOf(normalizedValues);
+    setBaseline(nextBaseline);
+    autosave.markSaved(nextBaseline);
+    setState((prev) =>
+      prev.content === initial.values.content
+        ? { ...prev, content: normalized }
+        : prev,
+    );
+  }
+
   function restoreDraft() {
     if (!restoreCandidate) return;
     const { draft } = restoreCandidate;
@@ -405,6 +419,7 @@ export function ArticleForm({
           <ContentField
             value={state.content}
             onChange={(content: JSONContent) => update("content", content)}
+            onReady={onEditorReady}
             error={errors.content}
           />
         </section>
