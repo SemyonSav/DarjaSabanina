@@ -1,11 +1,11 @@
-import type { Article, Testimonial } from "@/types";
+import type { LegacyArticle, Testimonial } from "@/types";
 
 /**
  * Контент статей в типизированном виде.
  * Позже можно заменить источником из Sanity / Contentlayer / MDX
  * без изменения UI-компонентов: достаточно адаптировать getArticles().
  */
-export const articles: Article[] = [
+export const articles: LegacyArticle[] = [
   {
     slug: "chto-takoe-sistemnye-rasstanovki",
     title: "Что такое системные расстановки",
@@ -251,24 +251,24 @@ export const testimonials: Testimonial[] = [
 ];
 
 /** CMS-ready API layer */
-export function getArticles(): Article[] {
+export function getArticles(): LegacyArticle[] {
   return [...articles].sort(
     (a, b) =>
       new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
   );
 }
 
-export function getFeaturedArticles(limit = 3): Article[] {
+export function getFeaturedArticles(limit = 3): LegacyArticle[] {
   const featured = getArticles().filter((a) => a.featured);
   const list = featured.length ? featured : getArticles();
   return list.slice(0, limit);
 }
 
-export function getArticleBySlug(slug: string): Article | undefined {
+export function getArticleBySlug(slug: string): LegacyArticle | undefined {
   return articles.find((a) => a.slug === slug);
 }
 
-export function getRelatedArticles(slug: string, limit = 3): Article[] {
+export function getRelatedArticles(slug: string, limit = 3): LegacyArticle[] {
   return getArticles()
     .filter((a) => a.slug !== slug)
     .slice(0, limit);

@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   index,
   integer,
@@ -125,3 +125,24 @@ export type ArticleRow = typeof articles.$inferSelect;
 export type NewArticleRow = typeof articles.$inferInsert;
 export type TestimonialRow = typeof testimonials.$inferSelect;
 export type RedirectRow = typeof redirects.$inferSelect;
+
+export const articlesRelations = relations(articles, ({ one }) => ({
+  category: one(categories, {
+    fields: [articles.categoryId],
+    references: [categories.id],
+  }),
+  cover: one(media, {
+    fields: [articles.coverImageId],
+    references: [media.id],
+    relationName: "cover",
+  }),
+  ogImage: one(media, {
+    fields: [articles.ogImageId],
+    references: [media.id],
+    relationName: "ogImage",
+  }),
+}));
+
+export const categoriesRelations = relations(categories, ({ many }) => ({
+  articles: many(articles),
+}));

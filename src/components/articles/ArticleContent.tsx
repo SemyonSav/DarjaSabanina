@@ -1,8 +1,8 @@
-import type { Article, ArticleBlock } from "@/types";
+import type { LegacyArticle, LegacyArticleBlock } from "@/types";
 import { ButtonLink } from "@/components/ui/Button";
 import { ArticleCard } from "@/components/sections/Blog";
 
-function Block({ block }: { block: ArticleBlock }) {
+function Block({ block }: { block: LegacyArticleBlock }) {
   switch (block.type) {
     case "heading":
       if (block.level === 3) {
@@ -42,7 +42,7 @@ function Block({ block }: { block: ArticleBlock }) {
   }
 }
 
-export function ArticleContent({ article }: { article: Article }) {
+export function ArticleContent({ article }: { article: LegacyArticle }) {
   return (
     <div className="prose-article">
       {article.content.map((block, i) => (
@@ -61,7 +61,7 @@ export function ArticleContent({ article }: { article: Article }) {
   );
 }
 
-export function RelatedArticles({ articles }: { articles: Article[] }) {
+export function RelatedArticles({ articles }: { articles: LegacyArticle[] }) {
   if (!articles.length) return null;
 
   return (

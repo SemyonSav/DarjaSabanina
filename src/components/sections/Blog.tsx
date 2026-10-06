@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import type { Article } from "@/types";
+import type { LegacyArticle as Article } from "@/types";
 import { formatDate, cn } from "@/lib/utils";
 import { fadeInUp, staggerContainer, viewportOnce } from "@/lib/animations";
 import { Container } from "@/components/ui/Container";
