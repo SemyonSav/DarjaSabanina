@@ -14,6 +14,7 @@ import {
 } from "@/lib/repos";
 import { readingTimeMinutes } from "@/lib/content/text";
 import {
+  articleDraftSchema,
   articleInputSchema,
   collectFieldErrors,
   type ArticleInput,
@@ -112,4 +113,34 @@ export async function deleteArticleAction(id: number): Promise<SaveResult> {
   await removeRedirectsTo(articlePath(existing.slug));
   refreshPages();
   return { ok: true, id };
+}
+
+export async function autosaveArticle(
+  id: number,
+  input: ArticleInput,
+): Promise<{ ok: boolean; savedAt?: string }> {
+  await requireAdmin();
+  const parsed = articleDraftSchema.safeParse(input);
+  const existing = await getArticleRowById(id);
+  if (!parsed.success || !existing) return { ok: false };
+
+  const savedAt = new Date();
+  await updateArticle(id, {
+    autosave: parsed.data,
+    autosavedAt: savedAt,
+    // Автосохранение — не изменение статьи: dateModified и sitemap не трогаем
+    updatedAt: existing.updatedAt,
+  });
+  return { ok: true, savedAt: savedAt.toISOString() };
+}
+
+export async function discardAutosave(id: number): Promise<void> {
+  await requireAdmin();
+  const existing = await getArticleRowById(id);
+  if (!existing) return;
+  await updateArticle(id, {
+    autosave: null,
+    autosavedAt: null,
+    updatedAt: existing.updatedAt,
+  });
 }

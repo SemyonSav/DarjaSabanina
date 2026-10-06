@@ -86,3 +86,24 @@ export function parseKeywords(value: string): string[] {
       return true;
     });
 }
+
+/**
+ * Мягкая схема для автосохранения: проверяет только типы и разумные
+ * размеры, чтобы незаконченная статья (пустой адрес и т. п.) тоже сохранялась.
+ */
+export const articleDraftSchema = z.object({
+  title: z.string().max(1000),
+  slug: z.string().max(300),
+  categoryId: optionalId,
+  excerpt: z.string().max(5000),
+  content: articleInputSchema.shape.content,
+  coverImageId: optionalId,
+  featured: z.boolean(),
+  seoTitle: z.string().max(1000),
+  seoDescription: z.string().max(5000),
+  focusKeyword: z.string().max(500),
+  keywords: z.array(z.string().max(500)).max(100),
+  canonicalUrl: z.string().max(2000),
+  noindex: z.boolean(),
+  ogImageId: optionalId,
+}) satisfies z.ZodType<ArticleInput>;

@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { JSONContent } from "@tiptap/core";
-import { RefreshCw, Trash2 } from "lucide-react";
+import { History, RefreshCw, Trash2 } from "lucide-react";
 import type { ArticleStatus, Category, MediaImage } from "@/types";
 import { slugify } from "@/lib/slug";
 import { formatDate } from "@/lib/utils";
@@ -27,9 +27,18 @@ import { ImageField } from "./ImageField";
 import { ContentField } from "./ContentField";
 import {
   deleteArticleAction,
+  discardAutosave,
   saveArticle,
   type SaveIntent,
 } from "@/app/admin/(panel)/articles/actions";
+import {
+  clearLocalDraft,
+  readLocalDraft,
+  snapshotOf,
+  useAutosave,
+  type AutosaveStatus,
+  type DraftSnapshot,
+} from "./useAutosave";
 
 export interface ArticleFormInitial {
   id?: number;
@@ -39,6 +48,8 @@ export interface ArticleFormInitial {
   values: ArticleInput;
   cover: MediaImage | null;
   ogImage: MediaImage | null;
+  /** Автосохранённые, но не применённые правки */
+  autosave?: DraftSnapshot | null;
 }
 
 /** Состояние формы: ключевые слова редактируются строкой через запятую */
@@ -62,6 +73,42 @@ const primaryButton =
   "h-11 w-full rounded-[0.9rem] bg-accent font-medium text-accent-foreground transition hover:brightness-105 disabled:opacity-60";
 const secondaryButton =
   "h-11 w-full rounded-[0.9rem] border border-border font-medium transition hover:border-accent hover:text-accent disabled:opacity-60";
+
+function timeOf(iso: string): string {
+  return new Intl.DateTimeFormat("ru-RU", {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(iso));
+}
+
+function AutosaveIndicator({
+  status,
+  isNew,
+}: {
+  status: AutosaveStatus;
+  isNew: boolean;
+}) {
+  const text = {
+    idle: "Все изменения сохранены",
+    pending: "Есть несохранённые правки…",
+    saving: "Автосохранение…",
+    saved: "",
+    error: "Не удалось автосохранить — сохраните вручную",
+  }[status.kind];
+  return (
+    <p
+      className={
+        status.kind === "error"
+          ? "text-xs text-red-700 dark:text-red-400"
+          : "text-xs text-muted-foreground"
+      }
+    >
+      {status.kind === "saved"
+        ? `Черновик правок сохранён ${isNew ? "в браузере " : ""}в ${timeOf(status.at)}. Нажмите «Сохранить», чтобы применить.`
+        : text}
+    </p>
+  );
+}
 
 const statusLabels: Record<ArticleStatus, string> = {
   draft: "Черновик",
@@ -88,6 +135,59 @@ export function ArticleForm({
   const [pending, startTransition] = useTransition();
   const router = useRouter();
 
+  const [baseline, setBaseline] = useState(() => snapshotOf(initial.values));
+  const [restoreCandidate, setRestoreCandidate] = useState<{
+    draft: DraftSnapshot;
+    source: "server" | "local";
+  } | null>(() =>
+    initial.autosave ? { draft: initial.autosave, source: "server" } : null,
+  );
+
+  // Несохранённый черновик новой статьи из прошлого сеанса
+  useEffect(() => {
+    if (initial.id) return;
+    const local = readLocalDraft();
+    if (local) setRestoreCandidate({ draft: local, source: "local" });
+  }, [initial.id]);
+
+  const input = useMemo(() => toInput(state), [state]);
+  const autosave = useAutosave({
+    articleId: initial.id,
+    draft: { values: input, cover, ogImage },
+    baseline,
+    // Пока не решено, что делать с найденным черновиком, не перезаписываем его
+    enabled: !restoreCandidate,
+  });
+
+  function restoreDraft() {
+    if (!restoreCandidate) return;
+    const { draft } = restoreCandidate;
+    setState(toFormState(draft.values));
+    setCover(draft.cover);
+    setOgImage(draft.ogImage);
+    setSlugTouched(true);
+    setRestoreCandidate(null);
+  }
+
+  function discardDraft() {
+    if (!restoreCandidate) return;
+    if (restoreCandidate.source === "local") {
+      clearLocalDraft();
+    } else if (initial.id) {
+      void discardAutosave(initial.id);
+    }
+    setRestoreCandidate(null);
+  }
+
+  async function openPreview(event: React.MouseEvent<HTMLAnchorElement>) {
+    if (!autosave.dirty) return;
+    // Сначала сохраняем правки, чтобы предпросмотр показал актуальный текст
+    event.preventDefault();
+    const tab = window.open("about:blank", "_blank");
+    await autosave.flush();
+    if (tab) tab.location.href = event.currentTarget.href;
+  }
+
   // Сообщение, оставленное перед переходом на страницу новой статьи
   useEffect(() => {
     try {
@@ -106,12 +206,14 @@ export function ArticleForm({
     value: ArticleFormState[K],
   ) {
     setState((prev) => ({ ...prev, [key]: value }));
+    setMessage(null);
     if (errors[key as keyof FieldErrors]) {
       setErrors((prev) => ({ ...prev, [key]: undefined }));
     }
   }
 
   function onTitleChange(title: string) {
+    setMessage(null);
     setState((prev) => ({
       ...prev,
       title,
@@ -135,6 +237,8 @@ export function ArticleForm({
       setMessage({ tone: "error", text: "Проверьте поля формы" });
       return;
     }
+    // Сравниваем с формой как есть (zod обрезает пробелы — это не правка)
+    const savedJson = snapshotOf(toInput(state));
     startTransition(async () => {
       const result = await saveArticle(initial.id ?? null, input, intent);
       if (!result.ok) {
@@ -149,10 +253,14 @@ export function ArticleForm({
             ? "Статья снята с публикации"
             : "Сохранено";
       setErrors({});
+      setBaseline(savedJson);
+      autosave.markSaved(savedJson);
+      setRestoreCandidate(null);
       if (initial.id) {
         setMessage({ tone: "ok", text });
         router.refresh();
       } else {
+        clearLocalDraft();
         try {
           sessionStorage.setItem(FLASH_KEY, text);
         } catch {}
@@ -191,6 +299,37 @@ export function ArticleForm({
       className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]"
     >
       <div className="min-w-0 space-y-6">
+        {restoreCandidate ? (
+          <div
+            role="alert"
+            className="flex flex-col gap-3 rounded-[1.25rem] border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900 sm:flex-row sm:items-center dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200"
+          >
+            <History className="size-5 shrink-0" />
+            <p className="flex-1">
+              {restoreCandidate.source === "local"
+                ? "Найден несохранённый черновик новой статьи"
+                : "Есть автосохранённые правки, которые не были применены"}{" "}
+              от {formatDate(restoreCandidate.draft.savedAt)},{" "}
+              {timeOf(restoreCandidate.draft.savedAt)}.
+            </p>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={restoreDraft}
+                className="rounded-[0.8rem] bg-amber-800 px-3 py-1.5 font-medium text-white transition hover:bg-amber-900 dark:bg-amber-700"
+              >
+                Восстановить
+              </button>
+              <button
+                type="button"
+                onClick={discardDraft}
+                className="rounded-[0.8rem] border border-amber-400 px-3 py-1.5 transition hover:bg-amber-100 dark:border-amber-700 dark:hover:bg-amber-900/40"
+              >
+                Отбросить
+              </button>
+            </div>
+          </div>
+        ) : null}
         <section className={`${cardClass} space-y-5`}>
           <Field label="Заголовок (H1)" htmlFor="title" error={errors.title}>
             <input
@@ -467,6 +606,7 @@ export function ArticleForm({
               </>
             )}
           </div>
+          <AutosaveIndicator status={autosave.status} isNew={!initial.id} />
           {message ? (
             <p
               role="status"
@@ -483,6 +623,7 @@ export function ArticleForm({
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-border pt-4 text-sm">
               <a
                 href={`/admin/preview/${initial.id}`}
+                onClick={openPreview}
                 target="_blank"
                 rel="noopener"
                 className="text-accent hover:underline"
