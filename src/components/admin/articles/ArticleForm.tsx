@@ -480,7 +480,15 @@ export function ArticleForm({
             </p>
           ) : null}
           {initial.id ? (
-            <div className="flex items-center justify-between border-t border-border pt-4 text-sm">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-border pt-4 text-sm">
+              <a
+                href={`/admin/preview/${initial.id}`}
+                target="_blank"
+                rel="noopener"
+                className="text-accent hover:underline"
+              >
+                Предпросмотр
+              </a>
               {isPublished ? (
                 <a
                   href={`/articles/${initial.values.slug}`}
@@ -488,16 +496,14 @@ export function ArticleForm({
                   rel="noopener"
                   className="text-accent hover:underline"
                 >
-                  Открыть на сайте
+                  На сайте
                 </a>
-              ) : (
-                <span />
-              )}
+              ) : null}
               <button
                 type="button"
                 disabled={pending}
                 onClick={onDelete}
-                className="inline-flex items-center gap-1.5 text-red-700 transition hover:underline disabled:opacity-50 dark:text-red-400"
+                className="ml-auto inline-flex items-center gap-1.5 text-red-700 transition hover:underline disabled:opacity-50 dark:text-red-400"
               >
                 <Trash2 className="size-4" />
                 Удалить

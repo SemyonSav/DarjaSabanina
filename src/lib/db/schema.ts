@@ -6,6 +6,7 @@ import {
   text,
 } from "drizzle-orm/sqlite-core";
 import type { JSONContent } from "@tiptap/core";
+import type { ArticleInput } from "@/lib/validation/article";
 
 const timestamps = {
   createdAt: integer("created_at", { mode: "timestamp" })
@@ -45,11 +46,7 @@ export const articleStatuses = ["draft", "published"] as const;
 export type ArticleStatus = (typeof articleStatuses)[number];
 
 /** Несохранённое состояние формы, которое пишет автосохранение */
-export interface ArticleAutosave {
-  title: string;
-  content: JSONContent;
-  [field: string]: unknown;
-}
+export type ArticleAutosave = ArticleInput;
 
 export const articles = sqliteTable(
   "articles",

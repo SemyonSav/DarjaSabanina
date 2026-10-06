@@ -1,8 +1,10 @@
 import { and, asc, count, desc, eq, like, ne, or, type SQL } from "drizzle-orm";
 import { db } from "@/lib/db";
+import { readingTimeMinutes } from "@/lib/content/text";
 import {
   articles,
   categories,
+  media,
   type ArticleStatus,
   type NewArticleRow,
 } from "@/lib/db/schema";
@@ -194,4 +196,41 @@ export async function countArticlesByCategory(): Promise<Map<number, number>> {
     .leftJoin(articles, eq(articles.categoryId, categories.id))
     .groupBy(categories.id);
   return new Map(rows.map((r) => [r.categoryId, r.value]));
+}
+
+/**
+ * Статья для предпросмотра: поверх сохранённой версии накладываются
+ * автосохранённые правки, если они есть.
+ */
+export async function getArticlePreview(id: number): Promise<Article | null> {
+  const row = await db.query.articles.findFirst({
+    with: withRelations,
+    where: eq(articles.id, id),
+  });
+  if (!row) return null;
+  const draft = row.autosave;
+  if (!draft) return toArticle(row);
+
+  const [category, cover, ogImage] = await Promise.all([
+    draft.categoryId
+      ? db.query.categories.findFirst({
+          where: eq(categories.id, draft.categoryId),
+        })
+      : null,
+    draft.coverImageId
+      ? db.query.media.findFirst({ where: eq(media.id, draft.coverImageId) })
+      : null,
+    draft.ogImageId
+      ? db.query.media.findFirst({ where: eq(media.id, draft.ogImageId) })
+      : null,
+  ]);
+
+  return toArticle({
+    ...row,
+    ...draft,
+    readingTime: readingTimeMinutes(draft.content),
+    category: category ?? null,
+    cover: cover ?? null,
+    ogImage: ogImage ?? null,
+  });
 }
