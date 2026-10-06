@@ -8,6 +8,7 @@ import { ImagePlus, Loader2 } from "lucide-react";
 import type { MediaImage } from "@/types";
 import type { FigureImageAttrs } from "@/lib/content/figure-image";
 import { Field, inputClass } from "@/components/admin/ui";
+import { MediaPicker } from "@/components/admin/media/MediaPicker";
 import {
   ACCEPT_IMAGES,
   imageFilesFrom,
@@ -40,6 +41,7 @@ export function ImageDialog({
   const [caption, setCaption] = useState("");
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
+  const [pickerOpen, setPickerOpen] = useState(false);
 
   async function upload(file: File) {
     setUploading(true);
@@ -156,6 +158,15 @@ export function ImageDialog({
             )}
           </button>
         )}
+        {!image ? (
+          <button
+            type="button"
+            onClick={() => setPickerOpen(true)}
+            className="text-sm text-accent hover:underline"
+          >
+            или выбрать из медиатеки
+          </button>
+        ) : null}
         <input
           ref={fileInputRef}
           type="file"
@@ -229,6 +240,15 @@ export function ImageDialog({
           </button>
         </div>
       </form>
+      <MediaPicker
+        open={pickerOpen}
+        onSelect={(media) => {
+          setImage(media);
+          setAlt((current) => current || media.alt);
+          setError("");
+        }}
+        onClose={() => setPickerOpen(false)}
+      />
     </dialog>,
     document.body,
   );
