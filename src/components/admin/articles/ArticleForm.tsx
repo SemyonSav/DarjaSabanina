@@ -25,6 +25,7 @@ import {
 import { CharCounter, SnippetPreview } from "./SeoFields";
 import { ImageField } from "./ImageField";
 import { ContentField } from "./ContentField";
+import { SeoChecklist } from "./SeoChecklist";
 import {
   deleteArticleAction,
   discardAutosave,
@@ -715,6 +716,8 @@ export function ArticleForm({
             </span>
           </label>
         </section>
+
+        <SeoChecklist input={input} coverAlt={cover?.alt ?? null} />
       </aside>
     </form>
   );

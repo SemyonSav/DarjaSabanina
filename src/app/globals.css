@@ -234,3 +234,51 @@ body {
 .tiptap-content figure {
   cursor: grab;
 }
+
+/* Справка по SEO в админке */
+.seo-guide h1 {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(2rem, 3vw, 2.5rem);
+  font-weight: 500;
+  line-height: 1.2;
+  margin-bottom: 1.25rem;
+}
+
+.seo-guide table {
+  width: 100%;
+  margin: 1.25rem 0 1.75rem;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.seo-guide th,
+.seo-guide td {
+  border: 1px solid var(--border);
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+  color: var(--muted-foreground);
+}
+
+.seo-guide th {
+  background: var(--muted);
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.seo-guide code {
+  border-radius: 0.375rem;
+  background: var(--muted);
+  padding: 0.1rem 0.35rem;
+  font-size: 0.9em;
+}
+
+.seo-guide li:has(> input[type="checkbox"]) {
+  list-style: none;
+  margin-left: -1.25rem;
+}
+
+.seo-guide input[type="checkbox"] {
+  margin-right: 0.5rem;
+  accent-color: var(--accent);
+}
