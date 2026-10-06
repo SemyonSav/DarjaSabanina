@@ -1,12 +1,14 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 import { requireAdmin } from "@/lib/auth";
 import {
   addRedirect,
   createArticle,
   deleteArticle,
   getArticleRowById,
+  getCategoryById,
   isArticleSlugTaken,
   listArticlesForAdmin,
   removeRedirectFrom,
@@ -15,7 +17,8 @@ import {
 } from "@/lib/repos";
 import { readingTimeMinutes } from "@/lib/content/text";
 import { renderContentHtml } from "@/lib/content/html";
-import { articlePath } from "@/lib/paths";
+import { articlePath, categoryPath } from "@/lib/paths";
+import { notifyIndexNow } from "@/lib/seo/indexnow";
 import {
   articleDraftSchema,
   articleInputSchema,
@@ -100,6 +103,22 @@ export async function saveArticle(
     // Адрес снова принадлежит живой статье
     await removeRedirectFrom(articlePath(data.slug));
     refreshPages();
+
+    if (status === "published" || wasPublished) {
+      const category = data.categoryId
+        ? await getCategoryById(data.categoryId)
+        : null;
+      const paths = [
+        articlePath(data.slug),
+        "/articles",
+        ...(category ? [categoryPath(category.slug)] : []),
+        ...(existing && existing.slug !== data.slug
+          ? [articlePath(existing.slug)]
+          : []),
+      ];
+      // Уведомление поисковиков — после ответа, не задерживая сохранение
+      after(() => notifyIndexNow(paths));
+    }
     return { ok: true, id: savedId };
   } catch (error) {
     console.error("Не удалось сохранить статью", error);
@@ -114,6 +133,10 @@ export async function deleteArticleAction(id: number): Promise<SaveResult> {
   await deleteArticle(id);
   await removeRedirectsTo(articlePath(existing.slug));
   refreshPages();
+  if (existing.status === "published") {
+    // Поисковик перепроверит адрес и уберёт его из выдачи
+    after(() => notifyIndexNow([articlePath(existing.slug), "/articles"]));
+  }
   return { ok: true, id };
 }
 

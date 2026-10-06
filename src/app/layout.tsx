@@ -61,6 +61,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru" suppressHydrationWarning>
+      <head>
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title={`${siteConfig.name} — статьи`}
+          href="/rss.xml"
+        />
+      </head>
       <body
         className={`${manrope.variable} ${cormorant.variable} min-h-screen bg-background font-sans text-foreground antialiased`}
       >
