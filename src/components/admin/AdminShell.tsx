@@ -9,6 +9,7 @@ import {
   FileText,
   FolderTree,
   Image as ImageIcon,
+  LayoutTemplate,
   LogOut,
   Menu,
   MessageSquareQuote,
@@ -26,6 +27,7 @@ interface NavLink {
 }
 
 const navLinks: NavLink[] = [
+  { href: "/admin/home", label: "Главная страница", icon: LayoutTemplate },
   { href: "/admin/articles", label: "Статьи", icon: FileText },
   { href: "/admin/categories", label: "Рубрики", icon: FolderTree },
   { href: "/admin/testimonials", label: "Отзывы", icon: MessageSquareQuote },
