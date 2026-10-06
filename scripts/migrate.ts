@@ -1,5 +1,5 @@
-import { migrate } from "drizzle-orm/better-sqlite3/migrator";
-import { db, databasePath } from "../src/lib/db";
+import { databasePath } from "../src/lib/db";
+import { runMigrations } from "../src/lib/db/migrate";
 
-migrate(db, { migrationsFolder: "./drizzle" });
+runMigrations();
 console.log(`Миграции применены: ${databasePath}`);

@@ -1,5 +1,5 @@
 /** Статьи и отзывы, которые хранились в коде до появления БД */
-import type { LegacyArticle, Testimonial } from "../src/types";
+import type { LegacyArticle, Testimonial } from "@/types";
 
 export const legacyArticles: LegacyArticle[] = [
   {

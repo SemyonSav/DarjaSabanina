@@ -195,7 +195,7 @@
 
 ## 8. Продакшен
 
-- [ ] **8.1. Docker-образ и деплой**
+- [x] **8.1. Docker-образ и деплой**
   `output: "standalone"`, многоэтапный `Dockerfile`, `docker-compose.prod.yml` (один сервис app + volume `DATA_DIR` для базы и картинок; `better-sqlite3` собирается в образе под Linux), применение миграций при старте, пример конфига nginx (HTTPS через Let's Encrypt, редирект http→https и www→без www, gzip/brotli, кэш статики).
   Коммит: `Добавить Docker-образ и конфигурацию для продакшена`
 

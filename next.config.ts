@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Самодостаточная сборка для Docker: .next/standalone + server.js
+  output: "standalone",
   images: {
     formats: ["image/avif", "image/webp"],
   },
@@ -8,9 +10,10 @@ const nextConfig: NextConfig = {
   // а не потоком в конце <body>: так их гарантированно видят все поисковики
   // и сервисы проверки. Страницы рендерятся быстро, стриминг тут не нужен.
   htmlLimitedBots: /.*/,
-  // Файл справки читается с диска — включаем его в standalone-сборку
+  // Файлы, которые читаются с диска, а не импортируются
   outputFileTracingIncludes: {
     "/admin/seo-guide": ["./src/content/**/*"],
+    "**/*": ["./drizzle/**/*"],
   },
   experimental: {
     // Middleware проверяет доступ к /api/admin/*; без этого тело запроса
