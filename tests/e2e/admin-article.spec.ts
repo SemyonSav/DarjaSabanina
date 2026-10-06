@@ -48,7 +48,9 @@ test("вход → новая статья → публикация → стат
   await page.goto(`/articles/${slug}`);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(title);
   await expect(page.locator(".prose-article h2")).toHaveText("Раздел статьи");
-  await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(2);
+  await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(
+    2,
+  );
   const sitemap = await (await page.request.get("/sitemap.xml")).text();
   expect(sitemap).toContain(`/articles/${slug}`);
 

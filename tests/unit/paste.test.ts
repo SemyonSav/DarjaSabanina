@@ -32,8 +32,8 @@ describe("cleanPastedHtml", () => {
   });
 
   it("оставляет свои картинки", () => {
-    expect(cleanPastedHtml('<p><img src="/uploads/2026/10/a.webp"></p>')).toContain(
-      '<img src="/uploads/2026/10/a.webp">',
-    );
+    expect(
+      cleanPastedHtml('<p><img src="/uploads/2026/10/a.webp"></p>'),
+    ).toContain('<img src="/uploads/2026/10/a.webp">');
   });
 });

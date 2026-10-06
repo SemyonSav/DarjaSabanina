@@ -123,9 +123,9 @@ describe("readingTimeMinutes", () => {
       content: [text(Array(words).fill("слово").join(" "))],
     });
     expect(readingTimeMinutes({ type: "doc", content: [] })).toBe(1);
-    expect(
-      readingTimeMinutes({ type: "doc", content: [paragraph(900)] }),
-    ).toBe(5);
+    expect(readingTimeMinutes({ type: "doc", content: [paragraph(900)] })).toBe(
+      5,
+    );
   });
 });
 
@@ -181,8 +181,15 @@ describe("isOwnImageSrc", () => {
 
 describe("containsPhrase", () => {
   it("находит фразу с учётом окончаний", () => {
-    expect(containsPhrase("Тревожность: причины и что делать", "тревога причины")).toBe(true);
-    expect(containsPhrase("Почему возникает тревога и её причины", "причина тревоги")).toBe(true);
+    expect(
+      containsPhrase("Тревожность: причины и что делать", "тревога причины"),
+    ).toBe(true);
+    expect(
+      containsPhrase(
+        "Почему возникает тревога и её причины",
+        "причина тревоги",
+      ),
+    ).toBe(true);
     expect(containsPhrase("Тревога как сигнал", "тревога причины")).toBe(false);
     expect(containsPhrase("что угодно", "")).toBe(false);
   });
