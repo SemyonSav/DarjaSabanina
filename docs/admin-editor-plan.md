@@ -9,9 +9,9 @@
 
 | Вопрос | Решение |
 |---|---|
-| Хостинг | Свой VPS и свой домен (не Vercel). Next.js в режиме `output: "standalone"` в Docker |
-| База данных | PostgreSQL 16 в Docker рядом с приложением, ORM — Drizzle (миграции в репозитории) |
-| Картинки | Локальный диск сервера (Docker volume) за слоем `StorageAdapter`, чтобы позже можно было перейти на S3-совместимое хранилище (Yandex Object Storage, Selectel) без переписывания кода |
+| Хостинг | Свой VPS в РФ (1–2 ГБ RAM) и свой домен (не Vercel). Next.js в режиме `output: "standalone"` в Docker |
+| База данных | SQLite — один файл на диске VPS (`DATA_DIR/site.db`), режим WAL. Драйвер `better-sqlite3`, ORM — Drizzle (миграции в репозитории). При росте возможен переход на PostgreSQL сменой драйвера и миграций |
+| Картинки | Диск VPS (`DATA_DIR/uploads`, тот же Docker volume, что и база) за слоем `StorageAdapter`, чтобы позже можно было перейти на S3-совместимое хранилище (Yandex Object Storage, Selectel) без переписывания кода |
 | Вход в админку | Один администратор. Логин и bcrypt-хеш пароля в переменных окружения; сессия — подписанная httpOnly cookie (JWT, `jose`) |
 | Редактор | Собственный WYSIWYG на базе Tiptap (ProseMirror): своя панель инструментов, стили сайта |
 | Функции | Черновики и предпросмотр, рубрики из админки, картинки в тексте, автосохранение. Отложенная публикация не нужна |
@@ -19,11 +19,11 @@
 | SEO | Яндекс и Google. Полноценная SEO-панель пока не нужна; вместо неё — справка «Как писать для SEO» в админке и обязательные SEO-поля статьи |
 | Текущие статьи | Переносятся в БД скриптом-сидом |
 
-### Варианты хранения для своего хостинга (на выбор, по умолчанию — вариант A)
+### Где лежат данные
 
-- **A. VPS + PostgreSQL + картинки на диске (рекомендуется).** Всё на одном сервере, 1–2 ГБ RAM достаточно (Timeweb Cloud, Selectel, Beget VPS и т. п., ~300–600 ₽/мес). Бэкап — `pg_dump` + архив папки `uploads` по cron.
-- **B. VPS + SQLite.** Ещё проще: база — один файл, бэкап — копия файла. Подходит для одного автора и небольшой нагрузки. Минус — сложнее масштабировать, ограниченные возможности поиска. Drizzle поддерживает оба варианта, переход A↔B — смена драйвера и миграций.
-- **C. Управляемые сервисы.** Managed PostgreSQL + S3-хранилище у облачного провайдера (Yandex Cloud, Selectel). Надёжнее (бэкапы и обновления делает провайдер), но дороже (от ~1500 ₽/мес) и сложнее в настройке.
+- **Продакшен:** база и картинки — на диске VPS, в папке `DATA_DIR` (Docker volume). Это единственная «живая» копия данных, поэтому обязательны ежедневные бэкапы с хранением копии **вне сервера** (задача 8.2).
+- **Разработка:** `./data/` в проекте (в `.gitignore`) — локальная тестовая копия, на сервер не попадает. Начальное наполнение на сервере — сид-скриптом (задача 1.4).
+- Приложение работает в **одном экземпляре** (SQLite не рассчитан на запись из нескольких серверов) — для лендинга с одним автором это не ограничение.
 
 > ⚠️ Обычный «виртуальный хостинг» под PHP не подойдёт: нужен Node.js 20+. Либо VPS, либо хостинг с поддержкой Node.js-приложений.
 > ⚠️ Форма заявки собирает персональные данные — для 152-ФЗ сервер с БД лучше размещать в РФ.
@@ -32,13 +32,14 @@
 
 ## 1. Фундамент
 
-- [ ] **1.1. Docker-окружение для разработки**
-  `docker-compose.yml` с PostgreSQL, `.env.example` (`DATABASE_URL`, `ADMIN_LOGIN`, `ADMIN_PASSWORD_HASH`, `AUTH_SECRET`, `NEXT_PUBLIC_SITE_URL`, `UPLOADS_DIR`), скрипты `db:*` в `package.json`.
-  Коммит: `Добавить docker-compose с PostgreSQL и пример env`
+- [ ] **1.1. Окружение для разработки**
+  `.env.example` (`DATA_DIR`, `ADMIN_LOGIN`, `ADMIN_PASSWORD_HASH`, `AUTH_SECRET`, `NEXT_PUBLIC_SITE_URL`), папка `data/` в `.gitignore`, скрипты `db:generate`, `db:migrate`, `db:seed`, `db:studio` в `package.json`.
+  Коммит: `Добавить пример env и папку данных`
 
-- [ ] **1.2. Drizzle ORM и схема БД**
+- [ ] **1.2. Drizzle ORM и схема БД (SQLite)**
+  Подключение `better-sqlite3` с `PRAGMA journal_mode=WAL`, `foreign_keys=ON`, `busy_timeout`; один экземпляр соединения на процесс. JSON-поля — `text` с режимом `json` в Drizzle, даты — ISO-строки или unix-время, булевы — `integer` (boolean mode).
   Таблицы:
-  - `articles`: id, slug (unique), title, excerpt, content (jsonb — документ Tiptap), content_html (кэш отрендеренного HTML), cover_image_id, category_id, status (`draft` | `published`), featured, reading_time, seo_title, seo_description, focus_keyword, keywords (text[]), og_image_id, canonical_url, noindex, published_at, updated_at, created_at
+  - `articles`: id, slug (unique), title, excerpt, content (JSON — документ Tiptap), content_html (кэш отрендеренного HTML), cover_image_id, category_id, status (`draft` | `published`), featured, reading_time, seo_title, seo_description, focus_keyword, keywords (JSON-массив строк), og_image_id, canonical_url, noindex, published_at, updated_at, created_at
   - `categories`: id, slug, name, description, seo_title, seo_description, sort_order
   - `media`: id, path, mime, width, height, size, alt, created_at
   - `testimonials`: id, name, text, role, is_published, sort_order, created_at
@@ -130,7 +131,7 @@
 ## 5. Медиа
 
 - [ ] **5.1. StorageAdapter и загрузка**
-  Интерфейс `StorageAdapter` + реализация `LocalDiskStorage` (папка `UPLOADS_DIR`). API загрузки: проверка типа (по содержимому, не по расширению) и размера, конвертация в WebP через `sharp`, ограничение максимальной ширины (~2000px), запись `width/height`. Отдача файлов по `/uploads/*` с долгим кэшем.
+  Интерфейс `StorageAdapter` + реализация `LocalDiskStorage` (папка `DATA_DIR/uploads`). API загрузки: проверка типа (по содержимому, не по расширению) и размера, конвертация в WebP через `sharp`, ограничение максимальной ширины (~2000px), запись `width/height`. Отдача файлов по `/uploads/*` с долгим кэшем.
   Коммит: `Добавить загрузку и хранение изображений`
 
 - [ ] **5.2. Медиатека**
@@ -195,11 +196,11 @@
 ## 8. Продакшен
 
 - [ ] **8.1. Docker-образ и деплой**
-  `output: "standalone"`, многоэтапный `Dockerfile`, `docker-compose.prod.yml` (app + postgres + volume для uploads), применение миграций при старте, пример конфига nginx (HTTPS через Let's Encrypt, редирект http→https и www→без www, gzip/brotli, кэш статики).
+  `output: "standalone"`, многоэтапный `Dockerfile`, `docker-compose.prod.yml` (один сервис app + volume `DATA_DIR` для базы и картинок; `better-sqlite3` собирается в образе под Linux), применение миграций при старте, пример конфига nginx (HTTPS через Let's Encrypt, редирект http→https и www→без www, gzip/brotli, кэш статики).
   Коммит: `Добавить Docker-образ и конфигурацию для продакшена`
 
 - [ ] **8.2. Бэкапы**
-  Скрипт ежедневного бэкапа (`pg_dump` + архив uploads, хранение N последних копий) и инструкция восстановления.
+  Скрипт ежедневного бэкапа (cron): консистентная копия базы через `sqlite3 site.db ".backup ..."` (или `VACUUM INTO`) — не простое копирование файла во время работы; архив `uploads`; хранение N последних копий и выгрузка копии вне сервера (S3/облачный диск/другой сервер через rsync). Инструкция восстановления.
   Коммит: `Добавить скрипты резервного копирования`
 
 - [ ] **8.3. Документация**
