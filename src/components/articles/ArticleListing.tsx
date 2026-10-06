@@ -5,7 +5,7 @@ import type { Article, Category } from "@/types";
 import { toArticleSummary } from "@/types";
 import { cn } from "@/lib/utils";
 import { categoryPath } from "@/lib/paths";
-import { ArticleCard } from "@/components/sections/Blog";
+import { ArticleCard } from "@/components/articles/ArticleCard";
 import { ButtonLink } from "@/components/ui/Button";
 
 /** /articles, /articles?page=2 — первая страница без параметра */

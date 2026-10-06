@@ -4,7 +4,12 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { heroContent, siteConfig } from "@/lib/site";
-import { fadeInUp, staggerContainer, viewportOnce } from "@/lib/animations";
+import {
+  fadeInUp,
+  riseIn,
+  staggerContainer,
+  viewportOnce,
+} from "@/lib/animations";
 import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 
@@ -58,7 +63,7 @@ export function Hero() {
             </p>
           </motion.div>
 
-          <motion.div variants={fadeInUp} className="order-1 lg:order-2">
+          <motion.div variants={riseIn} className="order-1 lg:order-2">
             <div className="relative mx-auto aspect-[4/5] w-full max-w-md overflow-hidden rounded-[1.75rem] bg-sand shadow-soft lg:max-w-none">
               <Image
                 src={siteConfig.avatar}

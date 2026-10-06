@@ -1,6 +1,6 @@
 import type { Article, ArticleSummary } from "@/types";
 import { ButtonLink } from "@/components/ui/Button";
-import { ArticleCard } from "@/components/sections/Blog";
+import { ArticleCard } from "@/components/articles/ArticleCard";
 import { ArticleBody } from "@/components/articles/ArticleBody";
 
 export function ArticleContent({ article }: { article: Article }) {
