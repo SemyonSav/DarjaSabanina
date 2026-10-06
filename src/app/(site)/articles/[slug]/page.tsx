@@ -7,6 +7,7 @@ import { getArticleBySlug, getRelatedArticles } from "@/lib/cms";
 import { toArticleSummary } from "@/types";
 import { buildArticleMetadata } from "@/lib/seo/article";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import {
   articleCrumbs,
   blogPostingSchema,
@@ -47,6 +48,9 @@ export default async function ArticlePage({ params }: PageProps) {
         )}
       />
 
+      <div className="mx-auto max-w-3xl">
+        <Breadcrumbs items={articleCrumbs(article)} />
+      </div>
       <ArticleView article={article} />
 
       <RelatedArticles articles={related.map(toArticleSummary)} />

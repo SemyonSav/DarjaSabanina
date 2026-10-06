@@ -167,7 +167,7 @@
   JSON-LD: `BlogPosting` (headline, description, image, datePublished, dateModified, author → Person, publisher, mainEntityOfPage, keywords, articleSection), `BreadcrumbList` на статье и рубрике, `Person`/`ProfessionalService` на главной, `FAQPage` для блока FAQ.
   Коммит: `Добавить микроразметку Schema.org`
 
-- [ ] **7.3. Семантика вёрстки и хлебные крошки**
+- [x] **7.3. Семантика вёрстки и хлебные крошки**
   Один H1 на страницу, корректная иерархия заголовков, `<article>`, `<time datetime>`, `<nav aria-label>` и видимые хлебные крошки, `lang="ru"`, alt у всех изображений, описательные тексты ссылок.
   Коммит: `Улучшить семантику вёрстки и добавить хлебные крошки`
 

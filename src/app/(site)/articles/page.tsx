@@ -9,6 +9,7 @@ import {
 } from "@/components/articles/ArticleListing";
 import { getArticlesPage, getCategoriesWithArticles } from "@/lib/cms";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { articlesCrumbs, breadcrumbSchema } from "@/lib/seo/jsonld";
 
 export const dynamic = "force-dynamic";
@@ -51,6 +52,7 @@ export default async function ArticlesPage({ searchParams }: PageProps) {
           ...breadcrumbSchema(articlesCrumbs()),
         }}
       />
+      <Breadcrumbs items={articlesCrumbs()} />
       <ArticleListing
         eyebrow="Блог"
         title="Статьи"

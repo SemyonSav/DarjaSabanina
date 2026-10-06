@@ -25,7 +25,13 @@ export function ArticleCard({
         className,
       )}
     >
-      <Link href={`/articles/${article.slug}`} className="relative block aspect-[16/10] overflow-hidden bg-sand">
+      {/* Дублирует ссылку заголовка: скрываем от клавиатуры и скринридеров */}
+      <Link
+        href={`/articles/${article.slug}`}
+        tabIndex={-1}
+        aria-hidden
+        className="relative block aspect-[16/10] overflow-hidden bg-sand"
+      >
         {article.cover ? (
           <Image
             src={article.cover.url}
@@ -61,6 +67,7 @@ export function ArticleCard({
           className="mt-5 inline-flex items-center gap-2 text-accent transition hover:gap-3"
         >
           Читать
+          <span className="sr-only"> статью «{article.title}»</span>
           <ArrowRight className="size-4" />
         </Link>
       </div>
