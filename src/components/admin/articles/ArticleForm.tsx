@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import type { JSONContent } from "@tiptap/core";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, Trash2 } from "lucide-react";
 import type { ArticleStatus, Category, MediaImage } from "@/types";
 import { slugify } from "@/lib/slug";
 import { formatDate } from "@/lib/utils";
@@ -24,6 +25,11 @@ import {
 import { CharCounter, SnippetPreview } from "./SeoFields";
 import { ImageField } from "./ImageField";
 import { ContentField } from "./ContentField";
+import {
+  deleteArticleAction,
+  saveArticle,
+  type SaveIntent,
+} from "@/app/admin/(panel)/articles/actions";
 
 export interface ArticleFormInitial {
   id?: number;
@@ -50,6 +56,13 @@ export function toInput(state: ArticleFormState): ArticleInput {
   return { ...rest, keywords: parseKeywords(keywordsText) };
 }
 
+const FLASH_KEY = "article-form-flash";
+
+const primaryButton =
+  "h-11 w-full rounded-[0.9rem] bg-accent font-medium text-accent-foreground transition hover:brightness-105 disabled:opacity-60";
+const secondaryButton =
+  "h-11 w-full rounded-[0.9rem] border border-border font-medium transition hover:border-accent hover:text-accent disabled:opacity-60";
+
 const statusLabels: Record<ArticleStatus, string> = {
   draft: "Черновик",
   published: "Опубликована",
@@ -68,6 +81,23 @@ export function ArticleForm({
   const [cover, setCover] = useState(initial.cover);
   const [ogImage, setOgImage] = useState(initial.ogImage);
   const [errors, setErrors] = useState<FieldErrors>({});
+  const [message, setMessage] = useState<{
+    tone: "ok" | "error";
+    text: string;
+  } | null>(null);
+  const [pending, startTransition] = useTransition();
+  const router = useRouter();
+
+  // Сообщение, оставленное перед переходом на страницу новой статьи
+  useEffect(() => {
+    try {
+      const flash = sessionStorage.getItem(FLASH_KEY);
+      if (flash) {
+        sessionStorage.removeItem(FLASH_KEY);
+        setMessage({ tone: "ok", text: flash });
+      }
+    } catch {}
+  }, []);
   // Адрес новой статьи следует за заголовком, пока его не правили вручную
   const [slugTouched, setSlugTouched] = useState(Boolean(initial.id));
 
@@ -99,9 +129,57 @@ export function ArticleForm({
     return null;
   }
 
+  function submit(intent: SaveIntent) {
+    const input = validate();
+    if (!input) {
+      setMessage({ tone: "error", text: "Проверьте поля формы" });
+      return;
+    }
+    startTransition(async () => {
+      const result = await saveArticle(initial.id ?? null, input, intent);
+      if (!result.ok) {
+        setErrors(result.errors ?? {});
+        setMessage({ tone: "error", text: result.message });
+        return;
+      }
+      const text =
+        intent === "publish"
+          ? "Статья опубликована"
+          : intent === "unpublish"
+            ? "Статья снята с публикации"
+            : "Сохранено";
+      setErrors({});
+      if (initial.id) {
+        setMessage({ tone: "ok", text });
+        router.refresh();
+      } else {
+        try {
+          sessionStorage.setItem(FLASH_KEY, text);
+        } catch {}
+        router.replace(`/admin/articles/${result.id}`);
+      }
+    });
+  }
+
   function onSubmit(event: React.FormEvent) {
     event.preventDefault();
-    validate();
+    submit("save");
+  }
+
+  function onDelete() {
+    if (!initial.id) return;
+    const confirmed = window.confirm(
+      `Удалить статью «${initial.values.title}»? Это действие нельзя отменить.`,
+    );
+    if (!confirmed) return;
+    startTransition(async () => {
+      const result = await deleteArticleAction(initial.id!);
+      if (!result.ok) {
+        setMessage({ tone: "error", text: result.message });
+        return;
+      }
+      router.replace("/admin/articles");
+    });
   }
 
   const isPublished = initial.status === "published";
@@ -350,12 +428,82 @@ export function ArticleForm({
               Изменена {formatDate(initial.updatedAt)}
             </p>
           ) : null}
-          <button
-            type="submit"
-            className="h-11 w-full rounded-[0.9rem] bg-accent font-medium text-accent-foreground transition hover:brightness-105"
-          >
-            Проверить
-          </button>
+          <div className="grid gap-2">
+            {isPublished ? (
+              <>
+                <button
+                  type="submit"
+                  disabled={pending}
+                  className={primaryButton}
+                >
+                  Сохранить изменения
+                </button>
+                <button
+                  type="button"
+                  disabled={pending}
+                  onClick={() => submit("unpublish")}
+                  className={secondaryButton}
+                >
+                  Снять с публикации
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  disabled={pending}
+                  onClick={() => submit("publish")}
+                  className={primaryButton}
+                >
+                  Опубликовать
+                </button>
+                <button
+                  type="submit"
+                  disabled={pending}
+                  className={secondaryButton}
+                >
+                  Сохранить черновик
+                </button>
+              </>
+            )}
+          </div>
+          {message ? (
+            <p
+              role="status"
+              className={
+                message.tone === "ok"
+                  ? "text-sm text-accent"
+                  : "text-sm text-red-700 dark:text-red-400"
+              }
+            >
+              {message.text}
+            </p>
+          ) : null}
+          {initial.id ? (
+            <div className="flex items-center justify-between border-t border-border pt-4 text-sm">
+              {isPublished ? (
+                <a
+                  href={`/articles/${initial.values.slug}`}
+                  target="_blank"
+                  rel="noopener"
+                  className="text-accent hover:underline"
+                >
+                  Открыть на сайте
+                </a>
+              ) : (
+                <span />
+              )}
+              <button
+                type="button"
+                disabled={pending}
+                onClick={onDelete}
+                className="inline-flex items-center gap-1.5 text-red-700 transition hover:underline disabled:opacity-50 dark:text-red-400"
+              >
+                <Trash2 className="size-4" />
+                Удалить
+              </button>
+            </div>
+          ) : null}
         </section>
 
         <section className={`${cardClass} space-y-5`}>

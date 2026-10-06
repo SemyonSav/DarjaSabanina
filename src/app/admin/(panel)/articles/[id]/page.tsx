@@ -32,7 +32,6 @@ export default async function EditArticlePage({ params }: PageProps) {
     <>
       <PageHeader title="Редактирование статьи" />
       <ArticleForm
-        key={article.updatedAt}
         initial={articleToInitial(article)}
         categories={categories}
       />

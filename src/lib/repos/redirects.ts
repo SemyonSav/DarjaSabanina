@@ -40,3 +40,8 @@ export async function addRedirect(
 export async function removeRedirectFrom(fromPath: string): Promise<void> {
   await db.delete(redirects).where(eq(redirects.fromPath, fromPath));
 }
+
+/** Убирает редиректы на удалённую страницу, чтобы не вести в 404 */
+export async function removeRedirectsTo(toPath: string): Promise<void> {
+  await db.delete(redirects).where(eq(redirects.toPath, toPath));
+}
