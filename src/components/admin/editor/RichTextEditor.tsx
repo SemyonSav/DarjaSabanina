@@ -6,6 +6,8 @@ import { Placeholder } from "@tiptap/extensions";
 import type { JSONContent } from "@tiptap/core";
 import { cn } from "@/lib/utils";
 import { getContentExtensions } from "@/lib/content/extensions";
+import { Toolbar } from "./Toolbar";
+import { SelectionMenu } from "./SelectionMenu";
 
 /**
  * Обычный JSON-клон документа. ProseMirror создаёт attrs без прототипа
@@ -26,8 +28,12 @@ export interface RichTextEditorProps {
   onReady?: (normalized: JSONContent) => void;
   placeholder?: string;
   invalid?: boolean;
-  /** Панель инструментов и прочие элементы поверх редактора */
-  renderToolbar?: (editor: Editor) => React.ReactNode;
+  /** Дополнительные кнопки панели инструментов (ссылка, картинка) */
+  toolbarExtras?: (editor: Editor) => React.ReactNode;
+  /** Дополнительные кнопки меню над выделением */
+  selectionExtras?: (editor: Editor) => React.ReactNode;
+  /** Диалоги и прочие элементы, которым нужен редактор */
+  children?: (editor: Editor) => React.ReactNode;
 }
 
 /**
@@ -40,7 +46,9 @@ export function RichTextEditor({
   onReady,
   placeholder = "Начните писать статью…",
   invalid,
-  renderToolbar,
+  toolbarExtras,
+  selectionExtras,
+  children,
 }: RichTextEditorProps) {
   const extensions = useMemo(
     () => [...getContentExtensions(), Placeholder.configure({ placeholder })],
@@ -53,7 +61,8 @@ export function RichTextEditor({
     immediatelyRender: false,
     editorProps: {
       attributes: {
-        class: "prose-article tiptap-content min-h-[24rem] px-5 py-4 outline-none md:px-8 md:py-6",
+        class:
+          "prose-article tiptap-content min-h-[24rem] px-5 py-4 outline-none md:px-8 md:py-6",
         "aria-label": "Текст статьи",
       },
     },
@@ -72,11 +81,21 @@ export function RichTextEditor({
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-[0.9rem] border bg-background transition focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/20",
+        "rounded-[0.9rem] border bg-background transition focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/20",
         invalid ? "border-red-400" : "border-border",
       )}
     >
-      {editor && renderToolbar ? renderToolbar(editor) : null}
+      {editor ? (
+        <>
+          <Toolbar editor={editor}>{toolbarExtras?.(editor)}</Toolbar>
+          <SelectionMenu editor={editor}>
+            {selectionExtras?.(editor)}
+          </SelectionMenu>
+          {children?.(editor)}
+        </>
+      ) : (
+        <div className="h-[49px] rounded-t-[0.9rem] border-b border-border bg-card" />
+      )}
       <EditorContent editor={editor} />
     </div>
   );
