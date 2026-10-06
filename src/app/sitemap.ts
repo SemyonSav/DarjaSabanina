@@ -1,11 +1,13 @@
 import type { MetadataRoute } from "next";
-import { getArticles } from "@/lib/articles";
+import { listPublishedSlugs } from "@/lib/repos";
+
+export const dynamic = "force-dynamic";
 import { siteConfig } from "@/lib/site";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const articles = getArticles().map((article) => ({
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const articles = (await listPublishedSlugs()).map((article) => ({
     url: `${siteConfig.url}/articles/${article.slug}`,
-    lastModified: new Date(article.publishedAt),
+    lastModified: article.updatedAt,
     changeFrequency: "monthly" as const,
     priority: 0.7,
   }));

@@ -76,6 +76,17 @@ export interface Article {
   createdAt: string;
 }
 
+/** Данные для карточки статьи — без тела, чтобы не гонять его в клиентские компоненты */
+export type ArticleSummary = Pick<
+  Article,
+  "id" | "slug" | "title" | "excerpt" | "cover" | "category" | "publishedAt"
+>;
+
+export function toArticleSummary(article: Article): ArticleSummary {
+  const { id, slug, title, excerpt, cover, category, publishedAt } = article;
+  return { id, slug, title, excerpt, cover, category, publishedAt };
+}
+
 export interface Testimonial {
   id: string;
   name: string;

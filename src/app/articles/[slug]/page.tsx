@@ -8,11 +8,8 @@ import {
 } from "@/components/articles/ArticleContent";
 import { Container } from "@/components/ui/Container";
 import { ButtonLink } from "@/components/ui/Button";
-import {
-  getAllArticleSlugs,
-  getArticleBySlug,
-  getRelatedArticles,
-} from "@/lib/articles";
+import { getArticleBySlug, getRelatedArticles } from "@/lib/cms";
+import { toArticleSummary } from "@/types";
 import { formatDate } from "@/lib/utils";
 import { siteConfig } from "@/lib/site";
 
@@ -20,15 +17,13 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateStaticParams() {
-  return getAllArticleSlugs().map((slug) => ({ slug }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  const article = await getArticleBySlug(slug);
   if (!article) return {};
 
   return {
@@ -38,27 +33,31 @@ export async function generateMetadata({
       title: article.title,
       description: article.description,
       type: "article",
-      publishedTime: article.publishedAt,
-      images: [{ url: article.coverImage, alt: article.coverAlt }],
+      publishedTime: article.publishedAt ?? undefined,
+      modifiedTime: article.updatedAt,
+      images: article.cover
+        ? [{ url: article.cover.url, alt: article.cover.alt }]
+        : undefined,
     },
   };
 }
 
 export default async function ArticlePage({ params }: PageProps) {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  const article = await getArticleBySlug(slug);
 
   if (!article) notFound();
 
-  const related = getRelatedArticles(slug, 3);
+  const related = await getRelatedArticles(article, 3);
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: article.title,
     description: article.description,
-    image: `${siteConfig.url}${article.coverImage}`,
+    image: article.cover ? `${siteConfig.url}${article.cover.url}` : undefined,
     datePublished: article.publishedAt,
+    dateModified: article.updatedAt,
     author: {
       "@type": "Person",
       name: siteConfig.name,
@@ -74,32 +73,36 @@ export default async function ArticlePage({ params }: PageProps) {
 
       <article className="mx-auto max-w-3xl">
         <p className="text-sm font-medium tracking-[0.12em] uppercase text-accent">
-          {article.category}
+          {article.category?.name}
         </p>
         <h1 className="mt-3 font-display text-4xl font-medium leading-tight md:text-5xl lg:text-6xl">
           {article.title}
         </h1>
 
         <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-          <time dateTime={article.publishedAt}>
-            {formatDate(article.publishedAt)}
-          </time>
+          {article.publishedAt ? (
+            <time dateTime={article.publishedAt}>
+              {formatDate(article.publishedAt)}
+            </time>
+          ) : null}
           <span className="inline-flex items-center gap-1.5">
             <Clock className="size-4" />
             {article.readingTimeMinutes} мин чтения
           </span>
         </div>
 
-        <div className="relative mt-10 aspect-[16/10] overflow-hidden rounded-[1.5rem] bg-sand shadow-soft">
-          <Image
-            src={article.coverImage}
-            alt={article.coverAlt}
-            fill
-            priority
-            sizes="(max-width: 768px) 100vw, 768px"
-            className="object-cover"
-          />
-        </div>
+        {article.cover ? (
+          <div className="relative mt-10 aspect-[16/10] overflow-hidden rounded-[1.5rem] bg-sand shadow-soft">
+            <Image
+              src={article.cover.url}
+              alt={article.cover.alt}
+              fill
+              priority
+              sizes="(max-width: 768px) 100vw, 768px"
+              className="object-cover"
+            />
+          </div>
+        ) : null}
 
         <div className="mt-10">
           <ArticleContent article={article} />
@@ -112,7 +115,7 @@ export default async function ArticlePage({ params }: PageProps) {
         </div>
       </article>
 
-      <RelatedArticles articles={related} />
+      <RelatedArticles articles={related.map(toArticleSummary)} />
     </Container>
   );
 }

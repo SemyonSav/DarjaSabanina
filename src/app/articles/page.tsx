@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
+import { toArticleSummary } from "@/types";
 import { ArticleCard } from "@/components/sections/Blog";
 import { Container } from "@/components/ui/Container";
 import { ButtonLink } from "@/components/ui/Button";
-import { getArticles } from "@/lib/articles";
+import { getArticles } from "@/lib/cms";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Статьи",
@@ -15,8 +18,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ArticlesPage() {
-  const articles = getArticles();
+export default async function ArticlesPage() {
+  const articles = await getArticles();
 
   return (
     <Container className="py-16 md:py-24">
@@ -34,7 +37,7 @@ export default function ArticlesPage() {
 
       <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {articles.map((article) => (
-          <ArticleCard key={article.slug} article={article} />
+          <ArticleCard key={article.slug} article={toArticleSummary(article)} />
         ))}
       </div>
 

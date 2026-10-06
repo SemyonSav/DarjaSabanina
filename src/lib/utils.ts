@@ -10,6 +10,7 @@ export function formatDate(date: string, locale = "ru-RU") {
     day: "numeric",
     month: "long",
     year: "numeric",
+    timeZone: "Europe/Moscow",
   }).format(new Date(date));
 }
 

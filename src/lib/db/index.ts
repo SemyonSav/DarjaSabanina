@@ -2,9 +2,10 @@ import fs from "node:fs";
 import path from "node:path";
 import Database from "better-sqlite3";
 import { drizzle, type BetterSQLite3Database } from "drizzle-orm/better-sqlite3";
+import { dataDir } from "../data-dir";
 import * as schema from "./schema";
 
-export const dataDir = path.resolve(process.env.DATA_DIR || "./data");
+export { dataDir };
 export const databasePath = path.join(dataDir, "site.db");
 
 export type DB = BetterSQLite3Database<typeof schema>;

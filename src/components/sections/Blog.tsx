@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import type { LegacyArticle as Article } from "@/types";
+import type { ArticleSummary } from "@/types";
 import { formatDate, cn } from "@/lib/utils";
 import { fadeInUp, staggerContainer, viewportOnce } from "@/lib/animations";
 import { Container } from "@/components/ui/Container";
@@ -15,7 +15,7 @@ export function ArticleCard({
   article,
   className,
 }: {
-  article: Article;
+  article: ArticleSummary;
   className?: string;
 }) {
   return (
@@ -26,21 +26,25 @@ export function ArticleCard({
       )}
     >
       <Link href={`/articles/${article.slug}`} className="relative block aspect-[16/10] overflow-hidden bg-sand">
-        <Image
-          src={article.coverImage}
-          alt={article.coverAlt}
-          fill
-          sizes="(max-width: 768px) 100vw, 33vw"
-          className="object-cover transition duration-500 group-hover:scale-105"
-        />
+        {article.cover ? (
+          <Image
+            src={article.cover.url}
+            alt={article.cover.alt}
+            fill
+            sizes="(max-width: 768px) 100vw, 33vw"
+            className="object-cover transition duration-500 group-hover:scale-105"
+          />
+        ) : null}
       </Link>
       <div className="flex flex-1 flex-col p-6">
-        <time
-          dateTime={article.publishedAt}
-          className="text-sm text-muted-foreground"
-        >
-          {formatDate(article.publishedAt)}
-        </time>
+        {article.publishedAt ? (
+          <time
+            dateTime={article.publishedAt}
+            className="text-sm text-muted-foreground"
+          >
+            {formatDate(article.publishedAt)}
+          </time>
+        ) : null}
         <h3 className="mt-2 font-display text-2xl font-medium leading-snug">
           <Link
             href={`/articles/${article.slug}`}
@@ -64,7 +68,7 @@ export function ArticleCard({
   );
 }
 
-export function Blog({ articles }: { articles: Article[] }) {
+export function Blog({ articles }: { articles: ArticleSummary[] }) {
   return (
     <section id="blog" className="scroll-mt-24 py-20 md:py-28">
       <Container>

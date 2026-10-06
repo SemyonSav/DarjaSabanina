@@ -1,17 +1,22 @@
+import { cache } from "react";
+import * as repos from "@/lib/repos";
+
 /**
- * Точка расширения для CMS (Sanity / Contentlayer / MDX).
- *
- * Сейчас статьи живут в `lib/articles.ts`.
- * Чтобы подключить CMS:
- * 1. Реализуйте fetch в этом модуле
- * 2. Замените импорты getArticles/getArticleBySlug на функции отсюда
- * 3. UI-компоненты менять не нужно — контракт типов в `types/index.ts`
+ * Данные для публичных страниц. Отдаются только опубликованные статьи.
+ * `cache` убирает повторные запросы в рамках одного рендера
+ * (например, generateMetadata + страница).
  */
 
-export {
-  getArticles,
-  getArticleBySlug,
-  getFeaturedArticles,
-  getRelatedArticles,
-  getAllArticleSlugs,
-} from "./articles";
+export const getArticles = cache(() => repos.listPublishedArticles());
+
+export const getArticleBySlug = cache((slug: string) =>
+  repos.getPublishedArticleBySlug(slug),
+);
+
+export const getFeaturedArticles = cache((limit = 3) =>
+  repos.listFeaturedArticles(limit),
+);
+
+export const getRelatedArticles = repos.listRelatedArticles;
+
+export const getTestimonials = cache(() => repos.listPublishedTestimonials());

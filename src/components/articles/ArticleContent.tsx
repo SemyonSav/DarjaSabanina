@@ -1,53 +1,12 @@
-import type { LegacyArticle, LegacyArticleBlock } from "@/types";
+import type { Article, ArticleSummary } from "@/types";
 import { ButtonLink } from "@/components/ui/Button";
 import { ArticleCard } from "@/components/sections/Blog";
+import { ArticleBody } from "@/components/articles/ArticleBody";
 
-function Block({ block }: { block: LegacyArticleBlock }) {
-  switch (block.type) {
-    case "heading":
-      if (block.level === 3) {
-        return <h3>{block.text}</h3>;
-      }
-      return <h2>{block.text}</h2>;
-    case "quote":
-      return (
-        <blockquote>
-          {block.text}
-          {block.author ? (
-            <footer className="mt-3 text-base not-italic text-muted-foreground">
-              — {block.author}
-            </footer>
-          ) : null}
-        </blockquote>
-      );
-    case "list":
-      if (block.ordered) {
-        return (
-          <ol>
-            {block.items.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ol>
-        );
-      }
-      return (
-        <ul>
-          {block.items.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-      );
-    default:
-      return <p>{block.text}</p>;
-  }
-}
-
-export function ArticleContent({ article }: { article: LegacyArticle }) {
+export function ArticleContent({ article }: { article: Article }) {
   return (
-    <div className="prose-article">
-      {article.content.map((block, i) => (
-        <Block key={`${block.type}-${i}`} block={block} />
-      ))}
+    <div>
+      <ArticleBody content={article.content} />
 
       <div className="mt-12 rounded-[1.5rem] border border-border bg-accent-soft/60 p-8 text-center">
         <p className="font-display text-2xl font-medium text-foreground md:text-3xl">
@@ -61,7 +20,7 @@ export function ArticleContent({ article }: { article: LegacyArticle }) {
   );
 }
 
-export function RelatedArticles({ articles }: { articles: LegacyArticle[] }) {
+export function RelatedArticles({ articles }: { articles: ArticleSummary[] }) {
   if (!articles.length) return null;
 
   return (

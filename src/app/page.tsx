@@ -7,19 +7,26 @@ import { WhyMe } from "@/components/sections/WhyMe";
 import { Testimonials } from "@/components/sections/Testimonials";
 import { FAQ } from "@/components/sections/FAQ";
 import { Contact } from "@/components/sections/Contact";
-import { getFeaturedArticles, testimonials } from "@/lib/articles";
+import { getFeaturedArticles, getTestimonials } from "@/lib/cms";
+import { toArticleSummary } from "@/types";
 
-export default function HomePage() {
-  const articles = getFeaturedArticles(3);
+// Данные из БД: страница рендерится на каждый запрос
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const [articles, testimonials] = await Promise.all([
+    getFeaturedArticles(3),
+    getTestimonials(),
+  ]);
 
   return (
     <>
       <Hero />
       <Requests />
       <Constellations />
-      <Blog articles={articles} />
+      <Blog articles={articles.map(toArticleSummary)} />
       <WhyMe />
-      <Testimonials items={testimonials} />
+      {testimonials.length ? <Testimonials items={testimonials} /> : null}
       <FAQ />
       <Contact />
     </>
