@@ -69,6 +69,8 @@ export interface Article {
   keywords: string[];
   canonicalUrl: string;
   noindex: boolean;
+  /** Есть автосохранённые, но не применённые правки */
+  hasAutosave: boolean;
   /** ISO-дата */
   publishedAt: string | null;
   /** ISO-дата */

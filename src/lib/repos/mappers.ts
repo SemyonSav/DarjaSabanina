@@ -60,6 +60,7 @@ export function toArticle(row: ArticleWithRelations): Article {
     keywords: row.keywords,
     canonicalUrl: row.canonicalUrl,
     noindex: row.noindex,
+    hasAutosave: row.autosave != null,
     publishedAt: row.publishedAt?.toISOString() ?? null,
     updatedAt: row.updatedAt.toISOString(),
     createdAt: row.createdAt.toISOString(),
