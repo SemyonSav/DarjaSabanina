@@ -8,6 +8,7 @@ import {
   listCategories,
 } from "@/lib/repos";
 import { PageHeader } from "@/components/admin/ui";
+import { getSiteSettings } from "@/lib/home/content";
 import { ArticleForm } from "@/components/admin/articles/ArticleForm";
 import { articleToInitial } from "@/components/admin/articles/initial";
 
@@ -56,6 +57,7 @@ export default async function EditArticlePage({ params }: PageProps) {
       <ArticleForm
         initial={initial}
         categories={categories}
+        siteName={(await getSiteSettings()).name}
       />
     </>
   );

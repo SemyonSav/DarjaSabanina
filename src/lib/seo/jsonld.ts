@@ -1,4 +1,6 @@
-import type { Article, FaqItem } from "@/types";
+import type { Article } from "@/types";
+import type { SiteSettings } from "@/lib/home/content";
+import { paragraphs } from "@/lib/home/schema";
 import { siteConfig } from "@/lib/site";
 import { articlePath, categoryPath } from "@/lib/paths";
 import { articleUrl, shareImage } from "./article";
@@ -14,17 +16,27 @@ const abs = (path: string) =>
 export const PERSON_ID = `${siteConfig.url}/#person`;
 export const WEBSITE_ID = `${siteConfig.url}/#website`;
 
-export function personSchema() {
+/** Телефон, email и профили — только заполненные */
+function contactPoints(s: SiteSettings) {
+  const { contacts } = s;
+  const sameAs = [contacts.telegram, contacts.whatsapp].filter(Boolean);
+  return {
+    telephone: contacts.phoneHref.replace("tel:", "") || undefined,
+    email: contacts.email || undefined,
+    sameAs: sameAs.length ? sameAs : undefined,
+  };
+}
+
+export function personSchema(s: SiteSettings) {
   return {
     "@type": "Person",
     "@id": PERSON_ID,
-    name: siteConfig.name,
-    jobTitle: "Психолог, психосоматолог, системный расстановщик",
-    description: siteConfig.description,
+    name: s.name,
+    jobTitle: s.jobTitle,
+    description: s.description,
     url: siteConfig.url,
-    image: abs(siteConfig.avatar),
-    telephone: siteConfig.phoneHref.replace("tel:", ""),
-    email: siteConfig.email,
+    image: abs(s.photo.url),
+    ...contactPoints(s),
     address: {
       "@type": "PostalAddress",
       addressLocality: "Москва",
@@ -36,33 +48,31 @@ export function personSchema() {
       "Системные расстановки",
       "Полевая терапия",
     ],
-    sameAs: [siteConfig.telegram],
   };
 }
 
-export function websiteSchema() {
+export function websiteSchema(s: SiteSettings) {
   return {
     "@type": "WebSite",
     "@id": WEBSITE_ID,
     url: siteConfig.url,
-    name: siteConfig.name,
-    description: siteConfig.description,
+    name: s.name,
+    description: s.description,
     inLanguage: "ru-RU",
     publisher: { "@id": PERSON_ID },
   };
 }
 
 /** Услуги психолога — для главной */
-export function professionalServiceSchema() {
+export function professionalServiceSchema(s: SiteSettings) {
   return {
     "@type": "ProfessionalService",
     "@id": `${siteConfig.url}/#service`,
-    name: `${siteConfig.name} — ${siteConfig.title}`,
-    description: siteConfig.description,
+    name: `${s.name} — ${s.jobTitle}`,
+    description: s.description,
     url: siteConfig.url,
-    image: abs(siteConfig.ogImage),
-    telephone: siteConfig.phoneHref.replace("tel:", ""),
-    email: siteConfig.email,
+    image: abs(s.shareImage.url),
+    ...contactPoints(s),
     founder: { "@id": PERSON_ID },
     areaServed: { "@type": "Country", name: "Россия" },
     availableLanguage: "ru",
@@ -86,8 +96,8 @@ export function breadcrumbSchema(crumbs: Crumb[]) {
   };
 }
 
-export function blogPostingSchema(article: Article) {
-  const image = shareImage(article);
+export function blogPostingSchema(article: Article, s: SiteSettings) {
+  const image = shareImage(article, s);
   const keywords = [article.focusKeyword, ...article.keywords].filter(Boolean);
   return {
     "@type": "BlogPosting",
@@ -108,13 +118,17 @@ export function blogPostingSchema(article: Article) {
   };
 }
 
-export function faqSchema(items: FaqItem[]) {
+export function faqSchema(items: { question: string; answer: string }[]) {
   return {
     "@type": "FAQPage",
     mainEntity: items.map((item) => ({
       "@type": "Question",
       name: item.question,
-      acceptedAnswer: { "@type": "Answer", text: item.answer },
+      acceptedAnswer: {
+        "@type": "Answer",
+        // Абзацы ответа разделены одиночными переводами строк
+        text: paragraphs(item.answer).join("\n\n"),
+      },
     })),
   };
 }

@@ -1,42 +1,20 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-  Compass,
-  HeartPulse,
-  House,
-  Shield,
-  Sparkles,
-  Users,
-  Wallet,
-  type LucideIcon,
-} from "lucide-react";
-import { requests } from "@/lib/site";
+import type { BlockData } from "@/lib/home/schema";
+import { iconComponents } from "@/components/ui/icons";
 import { fadeInUp, staggerContainer, viewportOnce } from "@/lib/animations";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
-const icons: Record<string, LucideIcon> = {
-  HeartPulse,
-  Users,
-  House,
-  Wallet,
-  Compass,
-  Shield,
-};
-
-export function Requests() {
+export function Requests({ data }: { data: BlockData<"requests"> }) {
   return (
     <section
       id="requests"
       className="scroll-mt-24 bg-warm py-20 dark:bg-muted/30 md:py-28"
     >
       <Container>
-        <SectionHeading
-          eyebrow="Запросы"
-          title="С какими запросами я работаю"
-          description="Вы можете прийти с конкретным симптомом или с ощущением, что «что-то не так». Вместе уточним фокус."
-        />
+        <SectionHeading {...data.heading} />
 
         <motion.div
           variants={staggerContainer}
@@ -45,11 +23,11 @@ export function Requests() {
           viewport={viewportOnce}
           className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
         >
-          {requests.map((item, i) => {
-            const Icon = icons[item.icon] ?? Sparkles;
+          {data.items.map((item, i) => {
+            const Icon = iconComponents[item.icon];
             return (
               <motion.article
-                key={item.id}
+                key={`${i}-${item.title}`}
                 variants={fadeInUp}
                 className="group relative overflow-hidden rounded-[1.4rem] border border-border bg-card p-6 shadow-soft transition duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-[0_16px_40px_rgba(107,127,106,0.14)]"
               >

@@ -102,20 +102,6 @@ export interface FaqItem {
   answer: string;
 }
 
-export interface RequestItem {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-}
-
-export interface Advantage {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-}
-
 export interface NavItem {
   href: string;
   label: string;

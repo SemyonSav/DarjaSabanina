@@ -1,5 +1,6 @@
 import { listPublishedArticles } from "@/lib/repos";
 import { siteConfig } from "@/lib/site";
+import { getSiteSettings } from "@/lib/home/content";
 import { articlePath } from "@/lib/paths";
 
 export const dynamic = "force-dynamic";
@@ -24,6 +25,10 @@ export async function GET() {
     (a) => !a.noindex,
   );
   const site = siteConfig.url;
+  const settings = await getSiteSettings();
+  const author = settings.contacts.email
+    ? `<author>${escapeXml(`${settings.contacts.email} (${settings.name})`)}</author>`
+    : "";
 
   const items = articles
     .map((article) => {
@@ -36,7 +41,7 @@ export async function GET() {
       <link>${url}</link>
       <guid isPermaLink="true">${url}</guid>
       <pubDate>${new Date(article.publishedAt ?? article.createdAt).toUTCString()}</pubDate>
-      <author>${escapeXml(`${siteConfig.email} (${siteConfig.name})`)}</author>
+      ${author}
       ${article.category ? `<category>${escapeXml(article.category.name)}</category>` : ""}
       <description>${escapeXml(article.description)}</description>
       ${cover}
@@ -48,10 +53,10 @@ export async function GET() {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>${escapeXml(`${siteConfig.name} — статьи`)}</title>
+    <title>${escapeXml(`${settings.name} — статьи`)}</title>
     <link>${site}/articles</link>
     <atom:link href="${site}/rss.xml" rel="self" type="application/rss+xml"/>
-    <description>${escapeXml(siteConfig.description)}</description>
+    <description>${escapeXml(settings.description)}</description>
     <language>ru</language>
     ${articles[0] ? `<lastBuildDate>${new Date(articles[0].updatedAt).toUTCString()}</lastBuildDate>` : ""}
 ${items}

@@ -6,6 +6,7 @@ import { Container } from "@/components/ui/Container";
 import { getArticleBySlug, getRelatedArticles } from "@/lib/cms";
 import { toArticleSummary } from "@/types";
 import { buildArticleMetadata } from "@/lib/seo/article";
+import { getSiteSettings } from "@/lib/home/content";
 import { redirectIfMoved } from "@/lib/redirects";
 import { articlePath } from "@/lib/paths";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -30,7 +31,7 @@ export async function generateMetadata({
   const article = await getArticleBySlug(slug);
   if (!article) return {};
 
-  return buildArticleMetadata(article);
+  return buildArticleMetadata(article, await getSiteSettings());
 }
 
 export default async function ArticlePage({ params }: PageProps) {
@@ -42,13 +43,16 @@ export default async function ArticlePage({ params }: PageProps) {
     notFound();
   }
 
-  const related = await getRelatedArticles(article, 3);
+  const [related, settings] = await Promise.all([
+    getRelatedArticles(article, 3),
+    getSiteSettings(),
+  ]);
 
   return (
     <Container className="py-14 md:py-20">
       <JsonLd
         data={graph(
-          blogPostingSchema(article),
+          blogPostingSchema(article, settings),
           breadcrumbSchema(articleCrumbs(article)),
         )}
       />

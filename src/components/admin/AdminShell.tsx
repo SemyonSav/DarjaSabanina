@@ -16,7 +16,6 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { siteConfig } from "@/lib/site";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { logout } from "@/app/admin/actions";
 
@@ -90,9 +89,11 @@ function SidebarFooter({ login }: { login: string }) {
 
 export function AdminShell({
   login,
+  siteName,
   children,
 }: {
   login: string;
+  siteName: string;
   children: React.ReactNode;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -103,7 +104,7 @@ export function AdminShell({
   const brand = (
     <Link href="/admin" className="block">
       <span className="block font-display text-xl font-medium leading-tight">
-        {siteConfig.name}
+        {siteName}
       </span>
       <span className="text-xs tracking-[0.14em] uppercase text-accent">
         Админ-панель

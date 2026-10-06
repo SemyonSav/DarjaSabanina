@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { Article, MediaImage } from "@/types";
 import { siteConfig } from "@/lib/site";
+import type { SiteImage, SiteSettings } from "@/lib/home/content";
 import { articlePath } from "@/lib/paths";
 
 /**
@@ -9,22 +10,26 @@ import { articlePath } from "@/lib/paths";
  */
 export function shareImage(
   article: Article,
-): MediaImage | { url: string; alt: string } {
+  settings: SiteSettings,
+): MediaImage | SiteImage {
   const candidate = [article.ogImage, article.cover].find(
     (image) => image && !image.url.endsWith(".svg"),
   );
-  return candidate ?? { url: siteConfig.ogImage, alt: siteConfig.name };
+  return candidate ?? settings.shareImage;
 }
 
 export function articleUrl(article: Pick<Article, "slug">): string {
   return `${siteConfig.url}${articlePath(article.slug)}`;
 }
 
-export function buildArticleMetadata(article: Article): Metadata {
+export function buildArticleMetadata(
+  article: Article,
+  settings: SiteSettings,
+): Metadata {
   const title = article.seoTitle || article.title;
   const description = article.description;
   const canonical = article.canonicalUrl || articleUrl(article);
-  const image = shareImage(article);
+  const image = shareImage(article, settings);
   const keywords = [article.focusKeyword, ...article.keywords].filter(Boolean);
   const images = [
     {
@@ -40,17 +45,17 @@ export function buildArticleMetadata(article: Article): Metadata {
     keywords: keywords.length ? keywords : undefined,
     alternates: { canonical },
     robots: article.noindex ? { index: false, follow: true } : undefined,
-    authors: [{ name: siteConfig.name, url: siteConfig.url }],
+    authors: [{ name: settings.name, url: siteConfig.url }],
     openGraph: {
       type: "article",
       url: articleUrl(article),
-      siteName: siteConfig.name,
+      siteName: settings.name,
       locale: siteConfig.locale,
       title,
       description,
       publishedTime: article.publishedAt ?? undefined,
       modifiedTime: article.updatedAt,
-      authors: [siteConfig.name],
+      authors: [settings.name],
       section: article.category?.name,
       tags: keywords.length ? keywords : undefined,
       images,

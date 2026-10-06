@@ -1,5 +1,6 @@
 import { requireAdmin } from "@/lib/auth";
 import { AdminShell } from "@/components/admin/AdminShell";
+import { getSiteSettings } from "@/lib/home/content";
 
 export default async function AdminPanelLayout({
   children,
@@ -7,5 +8,10 @@ export default async function AdminPanelLayout({
   children: React.ReactNode;
 }) {
   const session = await requireAdmin();
-  return <AdminShell login={session.login}>{children}</AdminShell>;
+  const { name } = await getSiteSettings();
+  return (
+    <AdminShell login={session.login} siteName={name}>
+      {children}
+    </AdminShell>
+  );
 }

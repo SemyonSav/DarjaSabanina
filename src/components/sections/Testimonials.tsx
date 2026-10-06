@@ -4,10 +4,17 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
 import type { Testimonial } from "@/types";
+import type { BlockData } from "@/lib/home/schema";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
-export function Testimonials({ items }: { items: Testimonial[] }) {
+export function Testimonials({
+  heading,
+  items,
+}: {
+  heading: BlockData<"testimonials">["heading"];
+  items: Testimonial[];
+}) {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -22,12 +29,7 @@ export function Testimonials({ items }: { items: Testimonial[] }) {
   return (
     <section id="reviews" className="scroll-mt-24 py-20 md:py-28">
       <Container>
-        <SectionHeading
-          eyebrow="Отзывы"
-          title="Истории тех, кто уже сделал шаг"
-          description="Имена изменены. Тексты отражают типичный опыт работы."
-          align="center"
-        />
+        <SectionHeading {...heading} align="center" />
 
         <div className="relative mx-auto max-w-3xl">
           <div className="min-h-[280px] overflow-hidden rounded-[1.75rem] border border-border bg-gradient-to-br from-card to-accent-soft/50 p-8 shadow-soft dark:to-accent-soft/30 md:p-12">

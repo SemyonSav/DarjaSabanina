@@ -119,9 +119,12 @@ const statusLabels: Record<ArticleStatus, string> = {
 export function ArticleForm({
   initial,
   categories,
+  siteName,
 }: {
   initial: ArticleFormInitial;
   categories: Category[];
+  /** Для превью сниппета: «Заголовок · Имя» */
+  siteName: string;
 }) {
   const [state, setState] = useState<ArticleFormState>(() =>
     toFormState(initial.values),
@@ -500,6 +503,7 @@ export function ArticleForm({
             title={state.seoTitle || state.title}
             slug={state.slug}
             description={state.seoDescription || state.excerpt}
+            siteName={siteName}
           />
 
           <Field

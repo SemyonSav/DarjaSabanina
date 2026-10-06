@@ -3,7 +3,8 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { heroContent, siteConfig } from "@/lib/site";
+import { paragraphs, type BlockData } from "@/lib/home/schema";
+import type { SiteImage } from "@/lib/home/content";
 import {
   fadeInUp,
   riseIn,
@@ -13,7 +14,13 @@ import {
 import { ButtonLink } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 
-export function Hero() {
+export function Hero({
+  data,
+  photo,
+}: {
+  data: BlockData<"hero">;
+  photo: SiteImage;
+}) {
   return (
     <section className="relative overflow-hidden pb-16 pt-10 md:pb-24 md:pt-16">
       <div
@@ -38,36 +45,40 @@ export function Hero() {
           className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16"
         >
           <motion.div variants={fadeInUp} className="relative order-2 lg:order-1">
-            <p className="mb-4 text-sm font-medium tracking-[0.16em] uppercase text-accent">
-              {heroContent.subheadline}
-            </p>
+            {data.eyebrow ? (
+              <p className="mb-4 text-sm font-medium tracking-[0.16em] uppercase text-accent">
+                {data.eyebrow}
+              </p>
+            ) : null}
             <h1 className="font-display text-5xl font-medium leading-[1.05] tracking-tight text-foreground md:text-6xl lg:text-7xl">
-              {heroContent.headline}
+              {data.title}
             </h1>
             <div className="mt-6 max-w-xl space-y-3 text-lg leading-relaxed text-muted-foreground">
-              {heroContent.lead.map((p) => (
+              {paragraphs(data.text).map((p) => (
                 <p key={p}>{p}</p>
               ))}
             </div>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <ButtonLink href="/#contact" size="lg">
-                Записаться на консультацию
+                {data.primaryLabel}
               </ButtonLink>
-              <ButtonLink href="/articles" variant="outline" size="lg">
-                Читать статьи
-                <ArrowRight className="size-4" />
-              </ButtonLink>
+              {data.secondaryLabel ? (
+                <ButtonLink href="/articles" variant="outline" size="lg">
+                  {data.secondaryLabel}
+                  <ArrowRight className="size-4" />
+                </ButtonLink>
+              ) : null}
             </div>
-            <p className="mt-6 text-sm text-muted-foreground">
-              Онлайн-консультации
-            </p>
+            {data.note ? (
+              <p className="mt-6 text-sm text-muted-foreground">{data.note}</p>
+            ) : null}
           </motion.div>
 
           <motion.div variants={riseIn} className="order-1 lg:order-2">
             <div className="relative mx-auto aspect-[4/5] w-full max-w-md overflow-hidden rounded-[1.75rem] bg-sand shadow-soft lg:max-w-none">
               <Image
-                src={siteConfig.avatar}
-                alt={`${siteConfig.name} — психолог, психосоматолог, расстановщик`}
+                src={photo.url}
+                alt={photo.alt}
                 fill
                 priority
                 sizes="(max-width: 1024px) 90vw, 480px"

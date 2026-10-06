@@ -2,13 +2,13 @@
 
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { constellationsIntro } from "@/lib/site";
+import { paragraphs, type BlockData } from "@/lib/home/schema";
 import { fadeInUp, viewportOnce } from "@/lib/animations";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ButtonLink } from "@/components/ui/Button";
 
-export function Constellations() {
+export function Constellations({ data }: { data: BlockData<"method"> }) {
   return (
     <section
       id="constellations"
@@ -21,10 +21,7 @@ export function Constellations() {
       <Container className="relative">
         <div className="grid items-start gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
           <div>
-            <SectionHeading
-              eyebrow="Метод"
-              title={constellationsIntro.title}
-            />
+            <SectionHeading {...data.heading} />
             <motion.div
               variants={fadeInUp}
               initial="hidden"
@@ -32,28 +29,30 @@ export function Constellations() {
               viewport={viewportOnce}
               className="space-y-4 text-lg leading-relaxed text-muted-foreground"
             >
-              <p className="text-xl text-foreground">
-                {constellationsIntro.intro}
-              </p>
-              {constellationsIntro.sections.map((section) => (
-                <div key={section.heading} className="space-y-4">
-                  <h3 className="pt-2 font-display text-2xl font-medium text-foreground">
-                    {section.heading}
-                  </h3>
-                  {section.paragraphs.map((p) => (
+              {paragraphs(data.intro).map((p) => (
+                <p key={p} className="text-xl text-foreground">
+                  {p}
+                </p>
+              ))}
+              {data.sections.map((section, i) => (
+                <div key={`${i}-${section.heading}`} className="space-y-4">
+                  {section.heading ? (
+                    <h3 className="pt-2 font-display text-2xl font-medium text-foreground">
+                      {section.heading}
+                    </h3>
+                  ) : null}
+                  {paragraphs(section.text).map((p) => (
                     <p key={p}>{p}</p>
                   ))}
                 </div>
               ))}
             </motion.div>
-            <ButtonLink
-              href={constellationsIntro.href}
-              variant="outline"
-              className="mt-8"
-            >
-              Подробнее
-              <ArrowRight className="size-4" />
-            </ButtonLink>
+            {data.moreLabel && data.moreHref ? (
+              <ButtonLink href={data.moreHref} variant="outline" className="mt-8">
+                {data.moreLabel}
+                <ArrowRight className="size-4" />
+              </ButtonLink>
+            ) : null}
           </div>
 
           <motion.div
@@ -72,17 +71,21 @@ export function Constellations() {
               className="absolute -bottom-16 -left-10 size-44 rounded-full bg-black/10 blur-2xl"
             />
             <p className="relative font-display text-3xl font-medium leading-snug md:text-4xl">
-              {constellationsIntro.slogan}
+              {data.slogan}
             </p>
-            <p className="relative mt-6 text-accent-foreground/80">
-              {constellationsIntro.sloganNote}
-            </p>
-            <ButtonLink
-              href="/#contact"
-              className="relative mt-8 bg-accent-foreground text-accent hover:brightness-95"
-            >
-              Записаться на расстановку
-            </ButtonLink>
+            {data.sloganNote ? (
+              <p className="relative mt-6 text-accent-foreground/80">
+                {data.sloganNote}
+              </p>
+            ) : null}
+            {data.ctaLabel ? (
+              <ButtonLink
+                href="/#contact"
+                className="relative mt-8 bg-accent-foreground text-accent hover:brightness-95"
+              >
+                {data.ctaLabel}
+              </ButtonLink>
+            ) : null}
           </motion.div>
         </div>
       </Container>

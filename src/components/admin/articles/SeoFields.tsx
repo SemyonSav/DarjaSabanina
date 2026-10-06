@@ -45,13 +45,15 @@ export function SnippetPreview({
   title,
   slug,
   description,
+  siteName,
 }: {
   title: string;
   slug: string;
   description: string;
+  siteName: string;
 }) {
   const host = siteConfig.url.replace(/^https?:\/\//, "").replace(/\/$/, "");
-  const fullTitle = title ? `${title} · ${siteConfig.name}` : siteConfig.name;
+  const fullTitle = title ? `${title} · ${siteName}` : siteName;
 
   return (
     <div className="rounded-[0.9rem] border border-border bg-background p-4">

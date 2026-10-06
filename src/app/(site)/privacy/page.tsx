@@ -1,15 +1,19 @@
 import type { Metadata } from "next";
-import { siteConfig } from "@/lib/site";
+import { getSiteSettings } from "@/lib/home/content";
 import { Container } from "@/components/ui/Container";
 import { ButtonLink } from "@/components/ui/Button";
 
-export const metadata: Metadata = {
-  title: "Политика конфиденциальности",
-  description: `Политика конфиденциальности сайта ${siteConfig.name}.`,
-  alternates: { canonical: "/privacy" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { name } = await getSiteSettings();
+  return {
+    title: "Политика конфиденциальности",
+    description: `Политика конфиденциальности сайта ${name}.`,
+    alternates: { canonical: "/privacy" },
+  };
+}
 
-export default function PrivacyPage() {
+export default async function PrivacyPage() {
+  const { name, contacts } = await getSiteSettings();
   return (
     <Container className="prose-article max-w-3xl py-16 md:py-24">
       <h1 className="font-display text-4xl font-medium md:text-5xl">
@@ -17,7 +21,7 @@ export default function PrivacyPage() {
       </h1>
       <p className="mt-6 text-muted-foreground">
         Настоящая политика описывает, какие данные могут обрабатываться при
-        использовании сайта {siteConfig.name} и отправке заявок через форму
+        использовании сайта {name} и отправке заявок через форму
         обратной связи.
       </p>
 
@@ -43,7 +47,7 @@ export default function PrivacyPage() {
       <h2>Контакты</h2>
       <p>
         По вопросам обработки персональных данных:{" "}
-        <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
+        <a href={`mailto:${contacts.email}`}>{contacts.email}</a>
       </p>
 
       <ButtonLink href="/" variant="outline" className="mt-8 no-underline">

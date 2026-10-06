@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, Manrope } from "next/font/google";
 import { Providers } from "@/components/layout/Providers";
 import { siteConfig } from "@/lib/site";
+import { getSiteSettings } from "@/lib/home/content";
 import "./globals.css";
 
 const manrope = Manrope({
@@ -17,60 +18,67 @@ const cormorant = Cormorant_Garamond({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(siteConfig.url),
-  title: {
-    default: `${siteConfig.name} — ${siteConfig.title}`,
-    template: `%s · ${siteConfig.name}`,
-  },
-  description: siteConfig.description,
-  applicationName: siteConfig.name,
-  authors: [{ name: siteConfig.name }],
-  creator: siteConfig.name,
-  openGraph: {
-    type: "website",
-    locale: siteConfig.locale,
-    url: siteConfig.url,
-    siteName: siteConfig.name,
-    title: `${siteConfig.name} — психолог и расстановщик`,
-    description: siteConfig.description,
-    images: [
-      {
-        url: siteConfig.ogImage,
-        width: 1200,
-        height: 1500,
-        alt: siteConfig.name,
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: `${siteConfig.name} — психолог и расстановщик`,
-    description: siteConfig.description,
-    images: [siteConfig.ogImage],
-  },
-  // Коды подтверждения прав из Яндекс.Вебмастера и Google Search Console
-  verification: {
-    google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
-    yandex: process.env.YANDEX_VERIFICATION || undefined,
-  },
-  icons: {
-    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
-  },
-};
+// Имя, описание и картинка редактируются в админке — читаем их из БД
+// на каждый запрос (и не обращаемся к БД при сборке)
+export const dynamic = "force-dynamic";
 
-export default function RootLayout({
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
+  const defaultTitle = `${settings.name} — ${settings.jobTitle}`;
+  const image = settings.shareImage;
+  return {
+    metadataBase: new URL(siteConfig.url),
+    title: { default: defaultTitle, template: `%s · ${settings.name}` },
+    description: settings.description,
+    applicationName: settings.name,
+    authors: [{ name: settings.name }],
+    creator: settings.name,
+    openGraph: {
+      type: "website",
+      locale: siteConfig.locale,
+      url: siteConfig.url,
+      siteName: settings.name,
+      title: defaultTitle,
+      description: settings.description,
+      images: [
+        {
+          url: image.url,
+          width: image.width,
+          height: image.height,
+          alt: image.alt,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: defaultTitle,
+      description: settings.description,
+      images: [image.url],
+    },
+    // Коды подтверждения прав из Яндекс.Вебмастера и Google Search Console
+    verification: {
+      google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
+      yandex: process.env.YANDEX_VERIFICATION || undefined,
+    },
+    icons: {
+      icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+    },
+  };
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { name } = await getSiteSettings();
   return (
     <html lang="ru" suppressHydrationWarning>
       <head>
         <link
           rel="alternate"
           type="application/rss+xml"
-          title={`${siteConfig.name} — статьи`}
+          title={`${name} — статьи`}
           href="/rss.xml"
         />
       </head>
