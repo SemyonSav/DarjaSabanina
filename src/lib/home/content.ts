@@ -3,6 +3,7 @@ import * as repos from "@/lib/repos";
 import { toMediaImage } from "@/lib/repos/mappers";
 import { siteConfig } from "@/lib/site";
 import type { NavItem } from "@/types";
+import type { RichDoc } from "./rich-text";
 import { SECTION_ANCHORS, type BlockData, type HomeSectionKey } from "./schema";
 
 export interface SiteImage {
@@ -27,7 +28,7 @@ export interface SiteSettings {
   name: string;
   jobTitle: string;
   description: string;
-  footerText: string;
+  footerText: RichDoc;
   seoTitle: string;
   seoDescription: string;
   contacts: SiteContacts;

@@ -2,7 +2,8 @@
 
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { paragraphs, type BlockData } from "@/lib/home/schema";
+import type { BlockData } from "@/lib/home/schema";
+import { RichText } from "@/components/ui/RichText";
 import { fadeInUp, viewportOnce } from "@/lib/animations";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -29,11 +30,10 @@ export function Constellations({ data }: { data: BlockData<"method"> }) {
               viewport={viewportOnce}
               className="space-y-4 text-lg leading-relaxed text-muted-foreground"
             >
-              {paragraphs(data.intro).map((p) => (
-                <p key={p} className="text-xl text-foreground">
-                  {p}
-                </p>
-              ))}
+              <RichText
+                value={data.intro}
+                paragraphClassName="text-xl text-foreground"
+              />
               {data.sections.map((section, i) => (
                 <div key={`${i}-${section.heading}`} className="space-y-4">
                   {section.heading ? (
@@ -41,9 +41,7 @@ export function Constellations({ data }: { data: BlockData<"method"> }) {
                       {section.heading}
                     </h3>
                   ) : null}
-                  {paragraphs(section.text).map((p) => (
-                    <p key={p}>{p}</p>
-                  ))}
+                  <RichText value={section.text} />
                 </div>
               ))}
             </motion.div>
@@ -73,11 +71,9 @@ export function Constellations({ data }: { data: BlockData<"method"> }) {
             <p className="relative font-display text-3xl font-medium leading-snug md:text-4xl">
               {data.slogan}
             </p>
-            {data.sloganNote ? (
-              <p className="relative mt-6 text-accent-foreground/80">
-                {data.sloganNote}
-              </p>
-            ) : null}
+            <div className="relative mt-6 space-y-3 text-accent-foreground/80">
+              <RichText value={data.sloganNote} />
+            </div>
             {data.ctaLabel ? (
               <ButtonLink
                 href="/#contact"

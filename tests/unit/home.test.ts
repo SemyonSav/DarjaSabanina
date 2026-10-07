@@ -10,9 +10,9 @@ const { runMigrations } = await import("@/lib/db/migrate");
 const { db, sqlite } = await import("@/lib/db");
 const { siteBlocks } = await import("@/lib/db/schema");
 const repos = await import("@/lib/repos");
-const { blockSchemas, layoutSchema, paragraphs } =
-  await import("@/lib/home/schema");
+const { blockSchemas, layoutSchema } = await import("@/lib/home/schema");
 const { blockDefaults, layoutDefaults } = await import("@/lib/home/defaults");
+const { richTextFromString } = await import("@/lib/home/rich-text");
 const { blockDefinitions } = await import("@/lib/home/fields");
 const { getSiteSettings, getHomeSections, phoneHref } =
   await import("@/lib/home/content");
@@ -84,12 +84,14 @@ describe("схемы блоков", () => {
 });
 
 describe("утилиты", () => {
-  it("делит текст на абзацы по строкам", () => {
-    expect(paragraphs("Первый\n\n  Второй \nТретий\n")).toEqual([
-      "Первый",
-      "Второй",
-      "Третий",
-    ]);
+  it("переводит строки в абзацы форматированного текста", () => {
+    expect(richTextFromString("Первый\n\n  Второй \nТретий\n")).toEqual({
+      type: "doc",
+      content: ["Первый", "Второй", "Третий"].map((text) => ({
+        type: "paragraph",
+        content: [{ type: "text", text }],
+      })),
+    });
   });
 
   it("строит ссылку на телефон", () => {
@@ -101,7 +103,9 @@ describe("утилиты", () => {
 
 describe("блоки в БД", () => {
   it("без сохранения — значения по умолчанию", async () => {
-    expect(await repos.getBlock("hero")).toEqual(blockDefaults.hero);
+    expect(await repos.getBlock("hero")).toEqual(
+      blockSchemas.hero.parse(blockDefaults.hero),
+    );
     expect(await repos.isBlockCustomized("hero")).toBe(false);
   });
 
@@ -115,7 +119,9 @@ describe("блоки в БД", () => {
     await db
       .insert(siteBlocks)
       .values({ key: "faq", data: { items: "мусор" } });
-    expect(await repos.getBlock("faq")).toEqual(blockDefaults.faq);
+    expect(await repos.getBlock("faq")).toEqual(
+      blockSchemas.faq.parse(blockDefaults.faq),
+    );
   });
 
   it("дописывает секции, которых нет в сохранённом порядке", async () => {

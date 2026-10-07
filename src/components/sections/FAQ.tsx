@@ -4,6 +4,7 @@ import type { BlockData } from "@/lib/home/schema";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Accordion } from "@/components/ui/Accordion";
+import { RichText } from "@/components/ui/RichText";
 import { ButtonLink } from "@/components/ui/Button";
 
 export function FAQ({ data }: { data: BlockData<"faq"> }) {
@@ -20,7 +21,11 @@ export function FAQ({ data }: { data: BlockData<"faq"> }) {
             ) : null}
           </div>
           <Accordion
-            items={data.items.map((item, i) => ({ id: String(i), ...item }))}
+            items={data.items.map((item, i) => ({
+              id: String(i),
+              question: item.question,
+              answer: <RichText value={item.answer} />,
+            }))}
           />
         </div>
       </Container>

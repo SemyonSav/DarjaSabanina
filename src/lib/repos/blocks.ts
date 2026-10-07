@@ -6,6 +6,7 @@ import {
   HOME_SECTIONS,
   layoutSchema,
   type BlockData,
+  type BlockInput,
   type BlockKey,
   type HomeLayout,
 } from "@/lib/home/schema";
@@ -57,16 +58,14 @@ export async function getBlock<K extends BlockKey>(
 ): Promise<BlockData<K>> {
   const defaults = blockDefaults[key];
   const stored = await readRaw(key);
-  if (stored === undefined) return defaults;
-
   const parsed = blockSchemas[key].safeParse(
-    mergeWithDefaults(defaults, stored),
+    stored === undefined ? defaults : mergeWithDefaults(defaults, stored),
   );
   if (parsed.success) return parsed.data as BlockData<K>;
   console.warn(
     `Блок «${key}» в БД некорректен — показаны значения по умолчанию`,
   );
-  return defaults;
+  return blockSchemas[key].parse(defaults) as BlockData<K>;
 }
 
 /** Блок был изменён в админке (иначе — значения по умолчанию) */
@@ -76,7 +75,7 @@ export async function isBlockCustomized(key: BlockKey): Promise<boolean> {
 
 export async function saveBlock<K extends BlockKey>(
   key: K,
-  data: BlockData<K>,
+  data: BlockInput<K>,
 ): Promise<void> {
   await writeRaw(key, blockSchemas[key].parse(data));
 }

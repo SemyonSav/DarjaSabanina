@@ -1,11 +1,14 @@
-import type { BlockData, BlockKey, HomeLayout } from "./schema";
+import type { BlockInput, BlockKey, HomeLayout } from "./schema";
 
 /**
+ * Форматированные поля здесь — обычные строки (каждая строка — абзац):
+ * при чтении они превращаются в документ.
+ *
  * Содержимое по умолчанию — то, что было на сайте до появления
  * редактирования. Используется, пока блок не сохраняли в админке,
  * и для кнопки «Сбросить к исходному».
  */
-export const blockDefaults: { [K in BlockKey]: BlockData<K> } = {
+export const blockDefaults: { [K in BlockKey]: BlockInput<K> } = {
   general: {
     name: "Дарья Сабанина",
     jobTitle: "Психолог • Психосоматолог • Расстановщик",

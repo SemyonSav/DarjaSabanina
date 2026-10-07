@@ -3,7 +3,8 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { paragraphs, type BlockData } from "@/lib/home/schema";
+import type { BlockData } from "@/lib/home/schema";
+import { RichText } from "@/components/ui/RichText";
 import type { SiteImage } from "@/lib/home/content";
 import {
   fadeInUp,
@@ -54,9 +55,7 @@ export function Hero({
               {data.title}
             </h1>
             <div className="mt-6 max-w-xl space-y-3 text-lg leading-relaxed text-muted-foreground">
-              {paragraphs(data.text).map((p) => (
-                <p key={p}>{p}</p>
-              ))}
+              <RichText value={data.text} />
             </div>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <ButtonLink href="/#contact" size="lg">

@@ -1,6 +1,6 @@
 import type { Article } from "@/types";
 import type { SiteSettings } from "@/lib/home/content";
-import { paragraphs } from "@/lib/home/schema";
+import { richTextToPlain, type RichDoc } from "@/lib/home/rich-text";
 import { siteConfig } from "@/lib/site";
 import { articlePath, categoryPath } from "@/lib/paths";
 import { articleUrl, shareImage } from "./article";
@@ -118,7 +118,7 @@ export function blogPostingSchema(article: Article, s: SiteSettings) {
   };
 }
 
-export function faqSchema(items: { question: string; answer: string }[]) {
+export function faqSchema(items: { question: string; answer: RichDoc }[]) {
   return {
     "@type": "FAQPage",
     mainEntity: items.map((item) => ({
@@ -126,8 +126,8 @@ export function faqSchema(items: { question: string; answer: string }[]) {
       name: item.question,
       acceptedAnswer: {
         "@type": "Answer",
-        // Абзацы ответа разделены одиночными переводами строк
-        text: paragraphs(item.answer).join("\n\n"),
+        // Простой текст: абзацы разделены пустой строкой
+        text: richTextToPlain(item.answer).replace(/\n/g, "\n\n"),
       },
     })),
   };

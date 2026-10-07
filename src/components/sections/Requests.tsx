@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import type { BlockData } from "@/lib/home/schema";
 import { iconComponents } from "@/components/ui/icons";
+import { RichText } from "@/components/ui/RichText";
 import { fadeInUp, staggerContainer, viewportOnce } from "@/lib/animations";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -43,9 +44,10 @@ export function Requests({ data }: { data: BlockData<"requests"> }) {
                 <h3 className="mt-5 font-display text-2xl font-medium">
                   {item.title}
                 </h3>
-                <p className="mt-2 leading-relaxed text-muted-foreground">
-                  {item.description}
-                </p>
+                <RichText
+                  value={item.description}
+                  paragraphClassName="mt-2 leading-relaxed text-muted-foreground"
+                />
               </motion.article>
             );
           })}

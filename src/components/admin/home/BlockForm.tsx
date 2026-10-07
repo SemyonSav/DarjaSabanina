@@ -17,6 +17,7 @@ import type { MediaImage } from "@/types";
 import { cn } from "@/lib/utils";
 import { ICONS, type IconName } from "@/lib/home/schema";
 import type { BlockDefinition, FieldDef } from "@/lib/home/fields";
+import { richTextToPlain, type RichDoc } from "@/lib/home/rich-text";
 import { iconComponents } from "@/components/ui/icons";
 import { MediaPicker } from "@/components/admin/media/MediaPicker";
 import { cardClass, inputClass, textareaClass } from "@/components/admin/ui";
@@ -335,7 +336,11 @@ function FieldInput(props: FieldProps) {
           <textarea
             id={id}
             rows={field.rows ?? 3}
-            value={String(value ?? "")}
+            value={
+              typeof value === "object" && value
+                ? richTextToPlain(value as RichDoc)
+                : String(value ?? "")
+            }
             onChange={(e) => onChange(path, e.target.value)}
             className={cn(textareaClass, border)}
           />

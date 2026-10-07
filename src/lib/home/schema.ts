@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { richText } from "./rich-text";
 
 /**
  * Содержимое главной страницы и общие настройки сайта, которые
@@ -9,9 +10,6 @@ import { z } from "zod";
 const line = (max = 200) =>
   z.string().trim().max(max, `Не длиннее ${max} символов`);
 const required = (max = 200) => line(max).min(1, "Заполните поле");
-/** Многострочный текст: каждый абзац — с новой строки */
-const text = (max = 5000) =>
-  z.string().trim().max(max, `Не длиннее ${max} символов`);
 const mediaId = z.number().int().positive().nullable();
 
 /** Иконки, из которых можно выбрать в админке (lucide-react) */
@@ -46,12 +44,12 @@ export type IconName = (typeof ICONS)[number];
 export const sectionHeadingSchema = z.object({
   eyebrow: line(60),
   title: required(160),
-  description: text(400),
+  description: richText(400),
 });
 
 const cardSchema = z.object({
   title: required(80),
-  description: text(400),
+  description: richText(400),
   icon: z.enum(ICONS),
 });
 
@@ -69,7 +67,7 @@ export const blockSchemas = {
     description: required(300),
     seoTitle: line(120),
     seoDescription: line(300),
-    footerText: text(400),
+    footerText: richText(400),
     ogImageId: mediaId,
   }),
   contacts: z.object({
@@ -88,7 +86,7 @@ export const blockSchemas = {
   hero: z.object({
     eyebrow: line(120),
     title: required(80),
-    text: text(2000),
+    text: richText(2000),
     primaryLabel: required(60),
     secondaryLabel: line(60),
     note: line(120),
@@ -101,12 +99,12 @@ export const blockSchemas = {
   }),
   method: z.object({
     heading: sectionHeadingSchema.pick({ eyebrow: true, title: true }),
-    intro: text(1000),
+    intro: richText(1000),
     sections: z
-      .array(z.object({ heading: line(160), text: text(5000) }))
+      .array(z.object({ heading: line(160), text: richText(5000) }))
       .max(10),
     slogan: line(300),
-    sloganNote: text(400),
+    sloganNote: richText(400),
     ctaLabel: line(60),
     moreLabel: line(60),
     moreHref: href,
@@ -124,14 +122,17 @@ export const blockSchemas = {
     heading: sectionHeadingSchema,
     buttonLabel: line(60),
     items: z
-      .array(z.object({ question: required(200), answer: text(5000) }))
+      .array(z.object({ question: required(200), answer: richText(5000) }))
       .max(40),
   }),
   contact: z.object({ heading: sectionHeadingSchema }),
 };
 
 export type BlockKey = keyof typeof blockSchemas;
-export type BlockData<K extends BlockKey> = z.infer<(typeof blockSchemas)[K]>;
+/** Данные блока после проверки (форматированный текст — документ) */
+export type BlockData<K extends BlockKey> = z.output<(typeof blockSchemas)[K]>;
+/** Данные блока на входе (форматированный текст может быть строкой) */
+export type BlockInput<K extends BlockKey> = z.input<(typeof blockSchemas)[K]>;
 
 /** Секции главной в порядке по умолчанию */
 export const HOME_SECTIONS = [
@@ -174,11 +175,3 @@ export const layoutSchema = z.object({
     ),
 });
 export type HomeLayout = z.infer<typeof layoutSchema>;
-
-/** Абзацы из многострочного текста */
-export function paragraphs(value: string): string[] {
-  return value
-    .split(/\n+/)
-    .map((p) => p.trim())
-    .filter(Boolean);
-}

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { SiteSettings } from "@/lib/home/content";
+import { RichText } from "@/components/ui/RichText";
 import { Container } from "@/components/ui/Container";
 
 export function Footer({ settings }: { settings: SiteSettings }) {
@@ -11,9 +12,12 @@ export function Footer({ settings }: { settings: SiteSettings }) {
       <Container className="grid gap-10 py-14 md:grid-cols-[1.2fr_1fr_1fr]">
         <div>
           <p className="font-display text-3xl font-medium">{settings.name}</p>
-          <p className="mt-3 max-w-sm text-muted-foreground">
-            {settings.jobTitle}. {settings.footerText}
-          </p>
+          <div className="mt-3 max-w-sm space-y-2 text-muted-foreground">
+            <RichText
+              value={settings.footerText}
+              prefix={`${settings.jobTitle}. `}
+            />
+          </div>
         </div>
 
         <div>

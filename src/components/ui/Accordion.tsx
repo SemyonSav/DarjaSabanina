@@ -4,10 +4,14 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { FaqItem } from "@/types";
+export interface AccordionItem {
+  id: string;
+  question: string;
+  answer: React.ReactNode;
+}
 
 interface AccordionProps {
-  items: FaqItem[];
+  items: AccordionItem[];
   className?: string;
 }
 
@@ -49,9 +53,7 @@ export function Accordion({ items, className }: AccordionProps) {
                   transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                 >
                   <div className="space-y-4 px-5 pb-6 text-muted-foreground leading-relaxed md:px-7">
-                    {item.answer.split("\n\n").map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
+                    {item.answer}
                   </div>
                 </motion.div>
               )}
