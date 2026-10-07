@@ -77,11 +77,14 @@ export const blockSchemas = {
       z.literal(""),
       z.url({ protocol: /^https$/, error: "Ссылка вида https://t.me/…" }),
     ]),
+    telegramChannel: z.union([
+      z.literal(""),
+      z.url({ protocol: /^https$/, error: "Ссылка вида https://t.me/…" }),
+    ]),
     whatsapp: z.union([
       z.literal(""),
       z.url({ protocol: /^https$/, error: "Ссылка вида https://wa.me/…" }),
     ]),
-    address: line(200),
   }),
   hero: z.object({
     eyebrow: line(120),

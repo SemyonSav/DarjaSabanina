@@ -134,8 +134,14 @@ export const blockDefinitions: Record<BlockKey, BlockDefinition> = {
       {
         type: "link",
         name: "telegram",
-        label: "Telegram",
+        label: "Telegram (личный)",
         placeholder: "https://t.me/username",
+      },
+      {
+        type: "link",
+        name: "telegramChannel",
+        label: "Telegram-канал",
+        placeholder: "https://t.me/channel",
       },
       {
         type: "link",
@@ -143,7 +149,6 @@ export const blockDefinitions: Record<BlockKey, BlockDefinition> = {
         label: "WhatsApp",
         placeholder: "https://wa.me/79001234567",
       },
-      { type: "text", name: "address", label: "Адрес" },
     ],
   },
   hero: {
@@ -324,7 +329,7 @@ export const blockDefinitions: Record<BlockKey, BlockDefinition> = {
   contact: {
     title: "Контакты",
     description:
-      "Заголовок блока с формой заявки. Телефон, email и мессенджеры — в разделе «Контакты».",
+      "Заголовок блока контактов. Телефон, email и мессенджеры — в разделе «Контакты».",
     fields: [heading()],
   },
 };

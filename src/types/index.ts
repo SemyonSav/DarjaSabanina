@@ -101,10 +101,3 @@ export interface NavItem {
   label: string;
 }
 
-export interface ContactFormData {
-  name: string;
-  phone: string;
-  email?: string;
-  message?: string;
-  format?: "online" | "offline";
-}

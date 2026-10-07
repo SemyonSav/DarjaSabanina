@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const COUNTER_ID = process.env.NEXT_PUBLIC_YANDEX_METRIKA_ID;
@@ -34,11 +33,8 @@ function CookieNotice() {
       className="fixed inset-x-4 bottom-24 z-50 mx-auto flex max-w-xl flex-col gap-3 rounded-[1.25rem] border border-border bg-card p-4 text-sm shadow-soft sm:flex-row sm:items-center md:bottom-6"
     >
       <p className="flex-1 text-muted-foreground">
-        Сайт использует cookie и Яндекс.Метрику, чтобы понимать, какие
-        материалы полезны.{" "}
-        <Link href="/privacy" className="text-accent underline">
-          Подробнее
-        </Link>
+        Сайт использует cookie и Яндекс.Метрику, чтобы понимать, какие материалы
+        полезны.
       </p>
       <button
         type="button"
