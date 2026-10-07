@@ -5,12 +5,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
-import { navItems, siteConfig } from "@/lib/site";
+import type { NavItem } from "@/types";
 import { cn } from "@/lib/utils";
 import { ButtonLink } from "@/components/ui/Button";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
-export function Header() {
+export function Header({ name, nav }: { name: string; nav: NavItem[] }) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
@@ -47,11 +47,11 @@ export function Header() {
           href="/"
           className="font-display text-2xl font-medium tracking-tight text-foreground"
         >
-          {siteConfig.shortName}
+          {name}
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Основная">
-          {navItems.map((item) => (
+          {nav.map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -92,7 +92,7 @@ export function Header() {
             className="border-b border-border bg-background lg:hidden"
           >
             <nav className="container-page flex flex-col gap-1 py-4" aria-label="Мобильная">
-              {navItems.map((item) => (
+              {nav.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}

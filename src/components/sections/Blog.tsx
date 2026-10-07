@@ -1,83 +1,31 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
-import type { Article } from "@/types";
-import { formatDate, cn } from "@/lib/utils";
+import type { ArticleSummary } from "@/types";
+import type { BlockData } from "@/lib/home/schema";
 import { fadeInUp, staggerContainer, viewportOnce } from "@/lib/animations";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ButtonLink } from "@/components/ui/Button";
+import { ArticleCard } from "@/components/articles/ArticleCard";
 
-export function ArticleCard({
-  article,
-  className,
+export function Blog({
+  data,
+  articles,
 }: {
-  article: Article;
-  className?: string;
+  data: BlockData<"blog">;
+  articles: ArticleSummary[];
 }) {
-  return (
-    <article
-      className={cn(
-        "group flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-border bg-card shadow-soft transition hover:-translate-y-1 hover:border-accent/40",
-        className,
-      )}
-    >
-      <Link href={`/articles/${article.slug}`} className="relative block aspect-[16/10] overflow-hidden bg-sand">
-        <Image
-          src={article.coverImage}
-          alt={article.coverAlt}
-          fill
-          sizes="(max-width: 768px) 100vw, 33vw"
-          className="object-cover transition duration-500 group-hover:scale-105"
-        />
-      </Link>
-      <div className="flex flex-1 flex-col p-6">
-        <time
-          dateTime={article.publishedAt}
-          className="text-sm text-muted-foreground"
-        >
-          {formatDate(article.publishedAt)}
-        </time>
-        <h3 className="mt-2 font-display text-2xl font-medium leading-snug">
-          <Link
-            href={`/articles/${article.slug}`}
-            className="transition hover:text-accent"
-          >
-            {article.title}
-          </Link>
-        </h3>
-        <p className="mt-3 flex-1 text-muted-foreground leading-relaxed">
-          {article.excerpt}
-        </p>
-        <Link
-          href={`/articles/${article.slug}`}
-          className="mt-5 inline-flex items-center gap-2 text-accent transition hover:gap-3"
-        >
-          Читать
-          <ArrowRight className="size-4" />
-        </Link>
-      </div>
-    </article>
-  );
-}
-
-export function Blog({ articles }: { articles: Article[] }) {
   return (
     <section id="blog" className="scroll-mt-24 py-20 md:py-28">
       <Container>
         <div className="mb-10 flex flex-col gap-6 md:mb-14 md:flex-row md:items-end md:justify-between">
-          <SectionHeading
-            className="mb-0"
-            eyebrow="Блог"
-            title="Статьи"
-            description="Размышления о тревоге, теле, отношениях и системных расстановках."
-          />
-          <ButtonLink href="/articles" variant="outline" className="shrink-0">
-            Все статьи
-          </ButtonLink>
+          <SectionHeading className="mb-0" {...data.heading} />
+          {data.buttonLabel ? (
+            <ButtonLink href="/articles" variant="outline" className="shrink-0">
+              {data.buttonLabel}
+            </ButtonLink>
+          ) : null}
         </div>
 
         <motion.div

@@ -1,0 +1,29 @@
+# Продакшен на VPS:
+#   cp .env.example .env   # заполнить значения
+#   docker compose -f docker-compose.prod.yml up -d --build
+#
+# Сайт слушает только 127.0.0.1:3000 — наружу его отдаёт nginx
+# (пример конфигурации: deploy/nginx.conf).
+
+services:
+  app:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
+        NEXT_PUBLIC_YANDEX_METRIKA_ID: ${NEXT_PUBLIC_YANDEX_METRIKA_ID:-}
+    env_file: .env
+    environment:
+      DATA_DIR: /app/data
+    volumes:
+      # База SQLite и загруженные картинки. Бэкап — deploy/backup.sh.
+      # Перед первым запуском: mkdir -p data && sudo chown 1001:1001 data
+      - ./data:/app/data
+    ports:
+      - "127.0.0.1:3000:3000"
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

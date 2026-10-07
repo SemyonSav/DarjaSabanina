@@ -42,3 +42,12 @@ next-env.d.ts
 
 # IDE
 .idea/
+!.env.example
+
+# local data (SQLite database, uploads)
+/data/
+
+# tests
+/.tmp/
+/test-results/
+/playwright-report/

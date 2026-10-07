@@ -2,22 +2,27 @@
 
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { constellationsIntro } from "@/lib/site";
+import type { BlockData } from "@/lib/home/schema";
+import { RichText } from "@/components/ui/RichText";
 import { fadeInUp, viewportOnce } from "@/lib/animations";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ButtonLink } from "@/components/ui/Button";
 
-export function Constellations() {
+export function Constellations({ data }: { data: BlockData<"method"> }) {
   return (
-    <section id="constellations" className="scroll-mt-24 py-20 md:py-28">
-      <Container>
-        <div className="grid items-center gap-10 lg:grid-cols-[1fr_0.9fr] lg:gap-16">
+    <section
+      id="constellations"
+      className="relative scroll-mt-24 overflow-hidden bg-accent-soft/60 py-20 dark:bg-accent-soft/30 md:py-28"
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -left-32 top-1/3 size-[26rem] rounded-full bg-accent/10 blur-3xl"
+      />
+      <Container className="relative">
+        <div className="grid items-start gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
           <div>
-            <SectionHeading
-              eyebrow="Метод"
-              title={constellationsIntro.title}
-            />
+            <SectionHeading {...data.heading} />
             <motion.div
               variants={fadeInUp}
               initial="hidden"
@@ -25,28 +30,27 @@ export function Constellations() {
               viewport={viewportOnce}
               className="space-y-4 text-lg leading-relaxed text-muted-foreground"
             >
-              <p className="text-xl text-foreground">
-                {constellationsIntro.intro}
-              </p>
-              {constellationsIntro.sections.map((section) => (
-                <div key={section.heading} className="space-y-4">
-                  <h3 className="pt-2 font-display text-2xl font-medium text-foreground">
-                    {section.heading}
-                  </h3>
-                  {section.paragraphs.map((p) => (
-                    <p key={p}>{p}</p>
-                  ))}
+              <RichText
+                value={data.intro}
+                paragraphClassName="text-xl text-foreground"
+              />
+              {data.sections.map((section, i) => (
+                <div key={`${i}-${section.heading}`} className="space-y-4">
+                  {section.heading ? (
+                    <h3 className="pt-2 font-display text-2xl font-medium text-foreground">
+                      {section.heading}
+                    </h3>
+                  ) : null}
+                  <RichText value={section.text} />
                 </div>
               ))}
             </motion.div>
-            <ButtonLink
-              href={constellationsIntro.href}
-              variant="outline"
-              className="mt-8"
-            >
-              Подробнее
-              <ArrowRight className="size-4" />
-            </ButtonLink>
+            {data.moreLabel && data.moreHref ? (
+              <ButtonLink href={data.moreHref} variant="outline" className="mt-8">
+                {data.moreLabel}
+                <ArrowRight className="size-4" />
+              </ButtonLink>
+            ) : null}
           </div>
 
           <motion.div
@@ -54,21 +58,30 @@ export function Constellations() {
             initial="hidden"
             whileInView="visible"
             viewport={viewportOnce}
-            className="relative overflow-hidden rounded-[1.75rem] border border-border bg-gradient-to-br from-sand via-warm to-accent-soft p-8 shadow-soft md:p-10"
+            className="relative overflow-hidden rounded-[1.75rem] bg-accent p-8 text-accent-foreground shadow-soft md:p-10 lg:sticky lg:top-28"
           >
             <div
               aria-hidden
-              className="absolute -right-10 -top-10 size-40 rounded-full bg-accent/15 blur-2xl"
+              className="absolute -right-12 -top-12 size-48 rounded-full bg-white/10 blur-2xl"
             />
-            <p className="font-display text-3xl font-medium leading-snug md:text-4xl">
-              {constellationsIntro.slogan}
+            <div
+              aria-hidden
+              className="absolute -bottom-16 -left-10 size-44 rounded-full bg-black/10 blur-2xl"
+            />
+            <p className="relative font-display text-3xl font-medium leading-snug md:text-4xl">
+              {data.slogan}
             </p>
-            <p className="mt-6 text-muted-foreground">
-              {constellationsIntro.sloganNote}
-            </p>
-            <ButtonLink href="/#contact" className="mt-8">
-              Записаться на расстановку
-            </ButtonLink>
+            <div className="relative mt-6 space-y-3 text-accent-foreground/80">
+              <RichText value={data.sloganNote} />
+            </div>
+            {data.ctaLabel ? (
+              <ButtonLink
+                href="/#contact"
+                className="relative mt-8 bg-accent-foreground text-accent hover:brightness-95"
+              >
+                {data.ctaLabel}
+              </ButtonLink>
+            ) : null}
           </motion.div>
         </div>
       </Container>

@@ -23,7 +23,32 @@
   --shadow-soft: var(--shadow-soft-value);
 }
 
+/*
+ * Запасные шрифты с подогнанными метриками (значения из next/font):
+ * пока грузятся Manrope и Cormorant, текст занимает почти то же место,
+ * и вёрстка не прыгает при подмене шрифта.
+ */
+@font-face {
+  font-family: "Manrope Fallback";
+  src: local("Arial");
+  ascent-override: 103.31%;
+  descent-override: 29.07%;
+  line-gap-override: 0%;
+  size-adjust: 103.19%;
+}
+
+@font-face {
+  font-family: "Cormorant Garamond Fallback";
+  src: local("Times New Roman");
+  ascent-override: 95.27%;
+  descent-override: 29.59%;
+  line-gap-override: 0%;
+  size-adjust: 96.98%;
+}
+
 :root {
+  --font-manrope: "Manrope Variable", "Manrope Fallback";
+  --font-cormorant: "Cormorant Garamond", "Cormorant Garamond Fallback";
   --background: #faf8f5;
   --foreground: #2c2c2a;
   --muted: #f0eeea;
@@ -145,4 +170,164 @@ body {
 
 .prose-article ol {
   list-style: decimal;
+}
+
+.prose-article h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose-article a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  transition: text-decoration-thickness 0.2s;
+}
+
+.prose-article a:hover {
+  text-decoration-thickness: 2px;
+}
+
+.prose-article strong {
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.prose-article hr {
+  margin: 2.5rem auto;
+  width: 6rem;
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+
+.prose-article blockquote p {
+  margin: 0;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+
+.prose-article blockquote p + p {
+  margin-top: 0.75rem;
+}
+
+.prose-article li > p {
+  margin-bottom: 0.25rem;
+}
+
+.prose-article > :first-child {
+  margin-top: 0;
+}
+
+/* Редактор в админке */
+.tiptap-content p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+  color: var(--muted-foreground);
+  opacity: 0.6;
+}
+
+.tiptap-content .ProseMirror-selectednode {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.prose-article figure {
+  margin: 2rem 0;
+}
+
+.prose-article figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 1.25rem;
+  background: var(--sand);
+}
+
+.prose-article figcaption {
+  margin-top: 0.75rem;
+  text-align: center;
+  font-size: 0.9375rem;
+  color: var(--muted-foreground);
+}
+
+.tiptap-content figure {
+  cursor: grab;
+}
+
+/* Справка по SEO в админке */
+.seo-guide h1 {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(2rem, 3vw, 2.5rem);
+  font-weight: 500;
+  line-height: 1.2;
+  margin-bottom: 1.25rem;
+}
+
+.seo-guide table {
+  width: 100%;
+  margin: 1.25rem 0 1.75rem;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.seo-guide th,
+.seo-guide td {
+  border: 1px solid var(--border);
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+  color: var(--muted-foreground);
+}
+
+.seo-guide th {
+  background: var(--muted);
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.seo-guide code {
+  border-radius: 0.375rem;
+  background: var(--muted);
+  padding: 0.1rem 0.35rem;
+  font-size: 0.9em;
+}
+
+.seo-guide li:has(> input[type="checkbox"]) {
+  list-style: none;
+  margin-left: -1.25rem;
+}
+
+.seo-guide input[type="checkbox"] {
+  margin-right: 0.5rem;
+  accent-color: var(--accent);
+}
+
+/* Мини-редактор оформления текста в блоках главной */
+.tiptap-mini p + p {
+  margin-top: 0.6em;
+}
+
+.tiptap-mini a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.tiptap-mini strong {
+  font-weight: 600;
+}
+
+.tiptap-mini p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+  color: var(--muted-foreground);
+  opacity: 0.6;
 }

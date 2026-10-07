@@ -6,6 +6,8 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
+      // Админка, API и предпросмотр черновиков не для поиска
+      disallow: ["/admin", "/api/"],
     },
     sitemap: `${siteConfig.url}/sitemap.xml`,
   };
