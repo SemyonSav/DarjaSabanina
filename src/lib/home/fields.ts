@@ -328,8 +328,7 @@ export const blockDefinitions: Record<BlockKey, BlockDefinition> = {
   },
   contact: {
     title: "Контакты",
-    description:
-      "Заголовок блока контактов. Телефон, email и мессенджеры — в разделе «Контакты».",
+    description: "Заголовок и подзаголовок блока контактов.",
     fields: [heading()],
   },
 };

@@ -14,6 +14,7 @@ import {
   Settings,
   Menu,
   MessageSquareQuote,
+  Phone,
   X,
   type LucideIcon,
 } from "lucide-react";
@@ -33,16 +34,23 @@ const navLinks: NavLink[] = [
   { href: "/admin/categories", label: "Рубрики", icon: FolderTree },
   { href: "/admin/testimonials", label: "Отзывы", icon: MessageSquareQuote },
   { href: "/admin/media", label: "Медиатека", icon: ImageIcon },
+  { href: "/admin/settings/contacts", label: "Контакты", icon: Phone },
   { href: "/admin/settings", label: "Настройки сайта", icon: Settings },
   { href: "/admin/seo-guide", label: "Справка по SEO", icon: BookOpen },
 ];
 
 function Nav({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
+  // Подсвечиваем самый точный раздел: на /admin/settings/contacts —
+  // «Контакты», а не «Настройки сайта»
+  const activeHref = navLinks
+    .map((link) => link.href)
+    .filter((href) => pathname === href || pathname.startsWith(`${href}/`))
+    .sort((a, b) => b.length - a.length)[0];
   return (
     <nav aria-label="Разделы админки" className="space-y-1">
       {navLinks.map(({ href, label, icon: Icon }) => {
-        const active = pathname === href || pathname.startsWith(`${href}/`);
+        const active = href === activeHref;
         return (
           <Link
             key={href}
