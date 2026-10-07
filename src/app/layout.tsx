@@ -1,22 +1,15 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Manrope } from "next/font/google";
 import { Providers } from "@/components/layout/Providers";
 import { siteConfig } from "@/lib/site";
 import { getSiteSettings } from "@/lib/home/content";
+// Шрифты из npm-пакетов Fontsource, а не next/font/google: сборка не
+// зависит от доступности Google Fonts и от формата его ответа (Turbopack
+// в Next 15.5 не разбирает ссылки вида fonts.gstatic.com/l/font?kit=…&…)
+import "@fontsource-variable/manrope";
+import "@fontsource/cormorant-garamond/400.css";
+import "@fontsource/cormorant-garamond/500.css";
+import "@fontsource/cormorant-garamond/600.css";
 import "./globals.css";
-
-const manrope = Manrope({
-  variable: "--font-manrope",
-  subsets: ["latin", "cyrillic"],
-  display: "swap",
-});
-
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
-  subsets: ["latin", "cyrillic"],
-  weight: ["400", "500", "600"],
-  display: "swap",
-});
 
 // Имя, описание и картинка редактируются в админке — читаем их из БД
 // на каждый запрос (и не обращаемся к БД при сборке)
@@ -83,7 +76,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`${manrope.variable} ${cormorant.variable} min-h-screen bg-background font-sans text-foreground antialiased`}
+        className="min-h-screen bg-background font-sans text-foreground antialiased"
       >
         <Providers>{children}</Providers>
       </body>
