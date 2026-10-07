@@ -17,7 +17,8 @@ import type { MediaImage } from "@/types";
 import { cn } from "@/lib/utils";
 import { ICONS, type IconName } from "@/lib/home/schema";
 import type { BlockDefinition, FieldDef } from "@/lib/home/fields";
-import { richTextToPlain, type RichDoc } from "@/lib/home/rich-text";
+import { richTextFromString, type RichDoc } from "@/lib/home/rich-text";
+import { InlineRichTextEditor } from "@/components/admin/editor/InlineRichTextEditor";
 import { iconComponents } from "@/components/ui/icons";
 import { MediaPicker } from "@/components/admin/media/MediaPicker";
 import { cardClass, inputClass, textareaClass } from "@/components/admin/ui";
@@ -336,13 +337,26 @@ function FieldInput(props: FieldProps) {
           <textarea
             id={id}
             rows={field.rows ?? 3}
-            value={
-              typeof value === "object" && value
-                ? richTextToPlain(value as RichDoc)
-                : String(value ?? "")
-            }
+            value={String(value ?? "")}
             onChange={(e) => onChange(path, e.target.value)}
             className={cn(textareaClass, border)}
+          />
+        </FieldShell>
+      );
+    case "richtext":
+      return (
+        <FieldShell {...props}>
+          <InlineRichTextEditor
+            id={id}
+            label={field.label}
+            rows={field.rows}
+            invalid={invalid}
+            value={
+              typeof value === "string"
+                ? richTextFromString(value)
+                : ((value as RichDoc | undefined) ?? richTextFromString(""))
+            }
+            onChange={(doc) => onChange(path, doc)}
           />
         </FieldShell>
       );

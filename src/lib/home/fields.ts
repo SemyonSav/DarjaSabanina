@@ -14,6 +14,8 @@ interface BaseField {
 export type FieldDef =
   | (BaseField & { type: "text"; placeholder?: string })
   | (BaseField & { type: "textarea"; rows?: number })
+  /** Текст с оформлением: абзацы, жирный, курсив, ссылки */
+  | (BaseField & { type: "richtext"; rows?: number })
   | (BaseField & { type: "link"; placeholder?: string })
   | (BaseField & { type: "image" })
   | (BaseField & { type: "icon" })
@@ -34,7 +36,8 @@ export interface BlockDefinition {
   fields: FieldDef[];
 }
 
-const PARAGRAPHS_HINT = "Каждый абзац — с новой строки.";
+const PARAGRAPHS_HINT =
+  "Enter — новый абзац, Shift+Enter — перенос строки. Выделите слова, чтобы сделать их жирными, курсивом или ссылкой.";
 
 const heading = (hint?: string): FieldDef => ({
   type: "group",
@@ -49,7 +52,7 @@ const heading = (hint?: string): FieldDef => ({
       hint: "Короткая подпись зелёными буквами. Можно оставить пустой.",
     },
     { type: "text", name: "title", label: "Заголовок (H2)" },
-    { type: "textarea", name: "description", label: "Описание", rows: 2 },
+    { type: "richtext", name: "description", label: "Описание", rows: 2 },
   ],
 });
 
@@ -63,7 +66,7 @@ const cards = (itemLabel: string, max = 24): FieldDef => ({
   newItem: { title: "", description: "", icon: "Sparkles" },
   fields: [
     { type: "text", name: "title", label: "Заголовок" },
-    { type: "textarea", name: "description", label: "Текст", rows: 3 },
+    { type: "richtext", name: "description", label: "Текст", rows: 3 },
     { type: "icon", name: "icon", label: "Иконка" },
   ],
 });
@@ -102,7 +105,7 @@ export const blockDefinitions: Record<BlockKey, BlockDefinition> = {
         hint: "Если пусто — описание сайта. 120–160 символов.",
       },
       {
-        type: "textarea",
+        type: "richtext",
         name: "footerText",
         label: "Текст в подвале",
         rows: 2,
@@ -155,7 +158,7 @@ export const blockDefinitions: Record<BlockKey, BlockDefinition> = {
         hint: "Главный заголовок страницы. Обычно — имя.",
       },
       {
-        type: "textarea",
+        type: "richtext",
         name: "text",
         label: "Текст",
         rows: 7,
@@ -203,7 +206,7 @@ export const blockDefinitions: Record<BlockKey, BlockDefinition> = {
         ],
       },
       {
-        type: "textarea",
+        type: "richtext",
         name: "intro",
         label: "Вступление",
         rows: 2,
@@ -220,7 +223,7 @@ export const blockDefinitions: Record<BlockKey, BlockDefinition> = {
         fields: [
           { type: "text", name: "heading", label: "Подзаголовок (H3)" },
           {
-            type: "textarea",
+            type: "richtext",
             name: "text",
             label: "Текст",
             rows: 6,
@@ -248,7 +251,7 @@ export const blockDefinitions: Record<BlockKey, BlockDefinition> = {
         rows: 2,
       },
       {
-        type: "textarea",
+        type: "richtext",
         name: "sloganNote",
         label: "Текст под слоганом",
         rows: 2,
@@ -308,7 +311,7 @@ export const blockDefinitions: Record<BlockKey, BlockDefinition> = {
         fields: [
           { type: "text", name: "question", label: "Вопрос" },
           {
-            type: "textarea",
+            type: "richtext",
             name: "answer",
             label: "Ответ",
             rows: 5,
