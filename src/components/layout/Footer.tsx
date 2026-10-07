@@ -5,7 +5,6 @@ import { Container } from "@/components/ui/Container";
 
 export function Footer({ settings }: { settings: SiteSettings }) {
   const { contacts } = settings;
-  const year = new Date().getFullYear();
 
   return (
     <footer className="border-t border-border bg-warm/60 dark:bg-muted/40">
@@ -106,12 +105,6 @@ export function Footer({ settings }: { settings: SiteSettings }) {
             ) : null}
           </ul>
         </div>
-      </Container>
-
-      <Container className="border-t border-border py-6 text-sm text-muted-foreground">
-        <p>
-          © {year} {settings.name}. Все права защищены.
-        </p>
       </Container>
     </footer>
   );
