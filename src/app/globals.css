@@ -23,7 +23,32 @@
   --shadow-soft: var(--shadow-soft-value);
 }
 
+/*
+ * Запасные шрифты с подогнанными метриками (значения из next/font):
+ * пока грузятся Manrope и Cormorant, текст занимает почти то же место,
+ * и вёрстка не прыгает при подмене шрифта.
+ */
+@font-face {
+  font-family: "Manrope Fallback";
+  src: local("Arial");
+  ascent-override: 103.31%;
+  descent-override: 29.07%;
+  line-gap-override: 0%;
+  size-adjust: 103.19%;
+}
+
+@font-face {
+  font-family: "Cormorant Garamond Fallback";
+  src: local("Times New Roman");
+  ascent-override: 95.27%;
+  descent-override: 29.59%;
+  line-gap-override: 0%;
+  size-adjust: 96.98%;
+}
+
 :root {
+  --font-manrope: "Manrope Variable", "Manrope Fallback";
+  --font-cormorant: "Cormorant Garamond", "Cormorant Garamond Fallback";
   --background: #faf8f5;
   --foreground: #2c2c2a;
   --muted: #f0eeea;
