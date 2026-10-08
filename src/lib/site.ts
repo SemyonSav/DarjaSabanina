@@ -179,5 +179,4 @@ export const constellationsIntro = {
     "Сделать видимым то, что управляет из глубины — и освободить поток жизни",
   sloganNote:
     "Индивидуальный формат. Бережный темп. Фокус на решении, а не на поиске виноватых.",
-  href: "/articles/chto-takoe-sistemnye-rasstanovki",
 };

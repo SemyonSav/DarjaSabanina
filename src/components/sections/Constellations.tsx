@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
 import { constellationsIntro } from "@/lib/site";
 import { fadeInUp, viewportOnce } from "@/lib/animations";
 import { Container } from "@/components/ui/Container";
@@ -46,14 +45,6 @@ export function Constellations() {
                 </div>
               ))}
             </motion.div>
-            <ButtonLink
-              href={constellationsIntro.href}
-              variant="outline"
-              className="mt-8"
-            >
-              Подробнее
-              <ArrowRight className="size-4" />
-            </ButtonLink>
           </div>
 
           <motion.div
