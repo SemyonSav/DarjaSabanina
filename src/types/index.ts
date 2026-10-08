@@ -53,21 +53,8 @@ export interface Advantage {
   icon: string;
 }
 
-export interface Direction {
-  id: string;
-  title: string;
-  description: string;
-}
-
 export interface NavItem {
   href: string;
   label: string;
 }
 
-export interface ContactFormData {
-  name: string;
-  phone: string;
-  email?: string;
-  message?: string;
-  format?: "online" | "offline";
-}

@@ -16,7 +16,11 @@ export function PersonJsonLd() {
       addressLocality: "Москва",
       addressCountry: "RU",
     },
-    sameAs: [siteConfig.telegram],
+    sameAs: [
+      siteConfig.telegram,
+      siteConfig.telegramChannel,
+      siteConfig.whatsapp,
+    ],
   };
 
   return (

@@ -3,8 +3,6 @@ import { navItems, siteConfig } from "@/lib/site";
 import { Container } from "@/components/ui/Container";
 
 export function Footer() {
-  const year = new Date().getFullYear();
-
   return (
     <footer className="border-t border-border bg-warm/60 dark:bg-muted/40">
       <Container className="grid gap-10 py-14 md:grid-cols-[1.2fr_1fr_1fr]">
@@ -72,6 +70,16 @@ export function Footer() {
             </li>
             <li>
               <a
+                href={siteConfig.telegramChannel}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-foreground"
+              >
+                Telegram-канал
+              </a>
+            </li>
+            <li>
+              <a
                 href={siteConfig.whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -82,15 +90,6 @@ export function Footer() {
             </li>
           </ul>
         </div>
-      </Container>
-
-      <Container className="flex flex-col gap-3 border-t border-border py-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-        <p>
-          © {year} {siteConfig.name}. Все права защищены.
-        </p>
-        <Link href="/privacy" className="hover:text-foreground">
-          Политика конфиденциальности
-        </Link>
       </Container>
     </footer>
   );

@@ -1,100 +1,101 @@
-"use client";
-
-import { Mail, MapPin, MessageCircle, Phone, Send } from "lucide-react";
+import {
+  Mail,
+  Megaphone,
+  MessageCircle,
+  Phone,
+  Send,
+  type LucideIcon,
+} from "lucide-react";
 import { siteConfig } from "@/lib/site";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { ContactForm } from "@/components/sections/ContactForm";
+
+interface ContactItem {
+  label: string;
+  value: string;
+  href: string;
+  external?: boolean;
+  icon: LucideIcon;
+}
+
+const items: ContactItem[] = [
+  {
+    label: "Телефон",
+    value: siteConfig.phone,
+    href: siteConfig.phoneHref,
+    icon: Phone,
+  },
+  {
+    label: "Email",
+    value: siteConfig.email,
+    href: `mailto:${siteConfig.email}`,
+    icon: Mail,
+  },
+  {
+    label: "Telegram",
+    value: "Написать лично",
+    href: siteConfig.telegram,
+    external: true,
+    icon: Send,
+  },
+  {
+    label: "Telegram-канал",
+    value: "Читать канал",
+    href: siteConfig.telegramChannel,
+    external: true,
+    icon: Megaphone,
+  },
+  {
+    label: "WhatsApp",
+    value: "Написать в WhatsApp",
+    href: siteConfig.whatsapp,
+    external: true,
+    icon: MessageCircle,
+  },
+];
 
 export function Contact() {
   return (
-    <section id="contact" className="scroll-mt-24 bg-gradient-to-b from-background to-sand/40 py-20 dark:to-muted/20 md:py-28">
+    <section
+      id="contact"
+      className="scroll-mt-24 bg-gradient-to-b from-background to-sand/40 py-20 dark:to-muted/20 md:py-28"
+    >
       <Container>
         <SectionHeading
           eyebrow="Контакты"
           title="Давайте познакомимся"
-          description="Оставьте заявку — я отвечу и помогу выбрать удобный формат встречи."
+          description="Напишите или позвоните — я отвечу и помогу выбрать удобный формат встречи."
+          align="center"
         />
 
-        <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="space-y-4">
-            <a
-              href={siteConfig.phoneHref}
-              className="flex items-center gap-4 rounded-[1.35rem] border border-border bg-card p-5 shadow-soft transition hover:border-accent/40"
+        <ul className="mx-auto flex max-w-5xl flex-wrap justify-center gap-4">
+          {items.map((item) => (
+            <li
+              key={item.label}
+              className="w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc((100%-2rem)/3)]"
             >
-              <span className="inline-flex size-11 items-center justify-center rounded-[1rem] bg-accent-soft text-accent">
-                <Phone className="size-5" />
-              </span>
-              <div>
-                <p className="text-sm text-muted-foreground">Телефон</p>
-                <p className="font-medium">{siteConfig.phone}</p>
-              </div>
-            </a>
-
-            <a
-              href={`mailto:${siteConfig.email}`}
-              className="flex items-center gap-4 rounded-[1.35rem] border border-border bg-card p-5 shadow-soft transition hover:border-accent/40"
-            >
-              <span className="inline-flex size-11 items-center justify-center rounded-[1rem] bg-accent-soft text-accent">
-                <Mail className="size-5" />
-              </span>
-              <div>
-                <p className="text-sm text-muted-foreground">Email</p>
-                <p className="font-medium">{siteConfig.email}</p>
-              </div>
-            </a>
-
-            <a
-              href={siteConfig.telegram}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-4 rounded-[1.35rem] border border-border bg-card p-5 shadow-soft transition hover:border-accent/40"
-            >
-              <span className="inline-flex size-11 items-center justify-center rounded-[1rem] bg-accent-soft text-accent">
-                <Send className="size-5" />
-              </span>
-              <div>
-                <p className="text-sm text-muted-foreground">Telegram</p>
-                <p className="font-medium">Написать в Telegram</p>
-              </div>
-            </a>
-
-            <a
-              href={siteConfig.whatsapp}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-4 rounded-[1.35rem] border border-border bg-card p-5 shadow-soft transition hover:border-accent/40"
-            >
-              <span className="inline-flex size-11 items-center justify-center rounded-[1rem] bg-accent-soft text-accent">
-                <MessageCircle className="size-5" />
-              </span>
-              <div>
-                <p className="text-sm text-muted-foreground">WhatsApp</p>
-                <p className="font-medium">Написать в WhatsApp</p>
-              </div>
-            </a>
-
-            <div className="flex items-start gap-4 rounded-[1.35rem] border border-border bg-card p-5 shadow-soft">
-              <span className="inline-flex size-11 items-center justify-center rounded-[1rem] bg-accent-soft text-accent">
-                <MapPin className="size-5" />
-              </span>
-              <div>
-                <p className="text-sm text-muted-foreground">Адрес</p>
-                <p className="font-medium">{siteConfig.addressFull}</p>
-              </div>
-            </div>
-
-            <div
-              className="flex h-48 items-center justify-center rounded-[1.35rem] border border-dashed border-border bg-muted/60 text-sm text-muted-foreground"
-              role="img"
-              aria-label="Карта — заглушка"
-            >
-              Карта появится здесь (Google / Yandex Maps)
-            </div>
-          </div>
-
-          <ContactForm />
-        </div>
+              <a
+                href={item.href}
+                {...(item.external
+                  ? { target: "_blank", rel: "noopener noreferrer" }
+                  : {})}
+                className="flex h-full items-center gap-4 rounded-[1.35rem] border border-border bg-card p-5 shadow-soft transition hover:-translate-y-0.5 hover:border-accent/40"
+              >
+                <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-[1rem] bg-accent-soft text-accent">
+                  <item.icon className="size-5" />
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-sm text-muted-foreground">
+                    {item.label}
+                  </span>
+                  <span className="block break-words font-medium">
+                    {item.value}
+                  </span>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
       </Container>
     </section>
   );

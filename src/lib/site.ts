@@ -1,4 +1,4 @@
-import type { Advantage, Direction, FaqItem, NavItem, RequestItem } from "@/types";
+import type { Advantage, FaqItem, NavItem, RequestItem } from "@/types";
 
 /**
  * Центральная конфигурация сайта.
@@ -16,16 +16,14 @@ export const siteConfig = {
   phoneHref: "tel:+79001234567",
   email: "hello@test.ru",
   telegram: "https://t.me/test",
+  telegramChannel: "https://t.me/test",
   whatsapp: "https://wa.me/8800553535",
-  address: "Москва, центр",
-  addressFull: "Москва (точный адрес сообщается после записи)",
   experienceYears: 12,
   avatar: "/avatar.jpg",
   ogImage: "/avatar.jpg",
 } as const;
 
 export const navItems: NavItem[] = [
-  { href: "/#about", label: "Обо мне" },
   { href: "/#requests", label: "Запросы" },
   { href: "/#constellations", label: "Расстановки" },
   { href: "/#blog", label: "Статьи" },
@@ -46,54 +44,6 @@ export const heroContent = {
     "Первая консультация-знакомство — без оплаты.",
   ],
 };
-
-export const aboutContent = {
-  title: "Обо мне",
-  paragraphs: [
-    "Более двенадцати лет я сопровождаю людей в моменты, когда важно остановиться, услышать себя и бережно изменить то, что давно мешает жить полной жизнью.",
-    "Мой подход — спокойный, внимательный и практичный. Я не даю готовых советов «как надо», а помогаю увидеть корни запроса: в теле, в отношениях, в семейной системе и в личных сценариях.",
-    "Работаю индивидуально и в групповом формате. Консультации доступны онлайн и очно в Москве.",
-  ],
-};
-
-export const directions: Direction[] = [
-  {
-    id: "psychologist",
-    title: "Психолог",
-    description:
-      "Индивидуальная поддержка в кризисах, сложных решениях и поиске внутренней опоры.",
-  },
-  {
-    id: "psychosomatics",
-    title: "Психосоматолог",
-    description:
-      "Исследуем связь телесных симптомов с эмоциями, стрессом и жизненными событиями.",
-  },
-  {
-    id: "constellations",
-    title: "Системные расстановки",
-    description:
-      "Делаем видимыми скрытые динамики рода и отношений, чтобы найти ресурсное решение.",
-  },
-  {
-    id: "anxiety",
-    title: "Работа с тревогой",
-    description:
-      "Снижаем внутреннее напряжение, возвращаем ощущение безопасности и контроля.",
-  },
-  {
-    id: "relationships",
-    title: "Отношения",
-    description:
-      "Партнёрство, семья, границы, близость — бережно разбираем то, что повторяется.",
-  },
-  {
-    id: "self",
-    title: "Самореализация",
-    description:
-      "Помогаю выйти из выгорания и тупика, чтобы снова слышать свои желания и цели.",
-  },
-];
 
 export const requests: RequestItem[] = [
   {
@@ -192,7 +142,7 @@ export const faqs: FaqItem[] = [
     id: "book",
     question: "Как записаться?",
     answer:
-      "Оставьте заявку в форме на сайте, напишите в Telegram или WhatsApp, либо позвоните. Я свяжусь с вами, чтобы уточнить запрос и подобрать удобное время.",
+      "Напишите в Telegram или WhatsApp, на почту или позвоните. Я свяжусь с вами, чтобы уточнить запрос и подобрать удобное время.",
   },
   {
     id: "sessions",
