@@ -7,7 +7,6 @@ import {
   RelatedArticles,
 } from "@/components/articles/ArticleContent";
 import { Container } from "@/components/ui/Container";
-import { ButtonLink } from "@/components/ui/Button";
 import {
   getAllArticleSlugs,
   getArticleBySlug,
@@ -103,12 +102,6 @@ export default async function ArticlePage({ params }: PageProps) {
 
         <div className="mt-10">
           <ArticleContent article={article} />
-        </div>
-
-        <div className="mt-10 flex justify-center">
-          <ButtonLink href="/#contact" size="lg">
-            Записаться на консультацию
-          </ButtonLink>
         </div>
       </article>
 
