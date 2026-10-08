@@ -63,7 +63,6 @@ describe("схемы блоков", () => {
     ["hero", { ...blockDefaults.hero, title: "" }],
     ["contacts", { ...blockDefaults.contacts, email: "не-почта" }],
     ["contacts", { ...blockDefaults.contacts, telegram: "http://t.me/x" }],
-    ["method", { ...blockDefaults.method, moreHref: "javascript:alert(1)" }],
     [
       "requests",
       {

@@ -61,6 +61,19 @@ export async function BlockEditPage({
         title={definition.title}
         description={definition.description}
       />
+      {blockKey === "contact" ? (
+        <p className="mb-6 rounded-[1rem] border border-accent/30 bg-accent-soft px-4 py-3 text-sm">
+          Телефон, email, Telegram, Telegram-канал и WhatsApp заполняются в
+          разделе{" "}
+          <Link
+            href="/admin/settings/contacts"
+            className="font-medium text-accent underline underline-offset-2"
+          >
+            «Контакты»
+          </Link>
+          .
+        </p>
+      ) : null}
       <BlockForm
         blockKey={blockKey}
         definition={definition}

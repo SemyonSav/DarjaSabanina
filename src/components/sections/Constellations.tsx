@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
 import type { BlockData } from "@/lib/home/schema";
 import { RichText } from "@/components/ui/RichText";
 import { fadeInUp, viewportOnce } from "@/lib/animations";
@@ -45,12 +44,6 @@ export function Constellations({ data }: { data: BlockData<"method"> }) {
                 </div>
               ))}
             </motion.div>
-            {data.moreLabel && data.moreHref ? (
-              <ButtonLink href={data.moreHref} variant="outline" className="mt-8">
-                {data.moreLabel}
-                <ArrowRight className="size-4" />
-              </ButtonLink>
-            ) : null}
           </div>
 
           <motion.div

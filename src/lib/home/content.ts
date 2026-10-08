@@ -19,8 +19,8 @@ export interface SiteContacts {
   phoneHref: string;
   email: string;
   telegram: string;
+  telegramChannel: string;
   whatsapp: string;
-  address: string;
 }
 
 /** Общие настройки сайта для шапки, подвала, метаданных и микроразметки */

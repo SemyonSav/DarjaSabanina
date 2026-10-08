@@ -23,8 +23,8 @@ export const blockDefaults: { [K in BlockKey]: BlockInput<K> } = {
     phone: "+7 (900) 123-45-67",
     email: "hello@test.ru",
     telegram: "https://t.me/test",
+    telegramChannel: "",
     whatsapp: "https://wa.me/8800553535",
-    address: "Москва (точный адрес сообщается после записи)",
   },
   hero: {
     eyebrow: "Психолог • Психосоматолог • Расстановщик",
@@ -117,8 +117,6 @@ export const blockDefaults: { [K in BlockKey]: BlockInput<K> } = {
     sloganNote:
       "Индивидуальный формат. Бережный темп. Фокус на решении, а не на поиске виноватых.",
     ctaLabel: "Записаться на расстановку",
-    moreLabel: "Подробнее",
-    moreHref: "/articles/chto-takoe-sistemnye-rasstanovki",
   },
   blog: {
     heading: {
@@ -201,7 +199,7 @@ export const blockDefaults: { [K in BlockKey]: BlockInput<K> } = {
       {
         question: "Как записаться?",
         answer:
-          "Оставьте заявку в форме на сайте, напишите в Telegram или WhatsApp, либо позвоните. Я свяжусь с вами, чтобы уточнить запрос и подобрать удобное время.",
+          "Напишите в Telegram или WhatsApp, на почту или позвоните. Я свяжусь с вами, чтобы уточнить запрос и подобрать удобное время.",
       },
       {
         question: "Сколько потребуется встреч?",
@@ -217,7 +215,7 @@ export const blockDefaults: { [K in BlockKey]: BlockInput<K> } = {
       eyebrow: "Контакты",
       title: "Давайте познакомимся",
       description:
-        "Оставьте заявку — я отвечу и помогу выбрать удобный формат встречи.",
+        "Напишите или позвоните — я отвечу и помогу выбрать удобный формат встречи.",
     },
   },
 };

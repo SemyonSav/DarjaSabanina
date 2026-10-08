@@ -5,7 +5,6 @@ import { Container } from "@/components/ui/Container";
 
 export function Footer({ settings }: { settings: SiteSettings }) {
   const { contacts } = settings;
-  const year = new Date().getFullYear();
 
   return (
     <footer className="border-t border-border bg-warm/60 dark:bg-muted/40">
@@ -80,6 +79,18 @@ export function Footer({ settings }: { settings: SiteSettings }) {
                 </a>
               </li>
             ) : null}
+            {contacts.telegramChannel ? (
+              <li>
+                <a
+                  href={contacts.telegramChannel}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-foreground"
+                >
+                  Telegram-канал
+                </a>
+              </li>
+            ) : null}
             {contacts.whatsapp ? (
               <li>
                 <a
@@ -94,15 +105,6 @@ export function Footer({ settings }: { settings: SiteSettings }) {
             ) : null}
           </ul>
         </div>
-      </Container>
-
-      <Container className="flex flex-col gap-3 border-t border-border py-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-        <p>
-          © {year} {settings.name}. Все права защищены.
-        </p>
-        <Link href="/privacy" className="hover:text-foreground">
-          Политика конфиденциальности
-        </Link>
       </Container>
     </footer>
   );

@@ -201,9 +201,11 @@ export function ArticleForm({
     if (!autosave.dirty) return;
     // Сначала сохраняем правки, чтобы предпросмотр показал актуальный текст
     event.preventDefault();
+    // Адрес берём до await: после него React обнуляет currentTarget
+    const href = event.currentTarget.href;
     const tab = window.open("about:blank", "_blank");
     await autosave.flush();
-    if (tab) tab.location.href = event.currentTarget.href;
+    if (tab) tab.location.href = href;
   }
 
   // Сообщение, оставленное перед переходом на страницу новой статьи

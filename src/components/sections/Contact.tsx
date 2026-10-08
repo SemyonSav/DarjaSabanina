@@ -1,8 +1,6 @@
-"use client";
-
 import {
   Mail,
-  MapPin,
+  Megaphone,
   MessageCircle,
   Phone,
   Send,
@@ -12,15 +10,11 @@ import type { BlockData } from "@/lib/home/schema";
 import type { SiteContacts } from "@/lib/home/content";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { ContactForm } from "@/components/sections/ContactForm";
-
-const cardClass =
-  "flex items-center gap-4 rounded-[1.35rem] border border-border bg-card p-5 shadow-soft";
 
 interface ContactItem {
   label: string;
   value: string;
-  href?: string;
+  href: string;
   external?: boolean;
   icon: LucideIcon;
 }
@@ -42,10 +36,17 @@ function contactItems(contacts: SiteContacts): ContactItem[] {
     },
     Boolean(contacts.telegram) && {
       label: "Telegram",
-      value: "Написать в Telegram",
+      value: "Написать лично",
       href: contacts.telegram,
       external: true,
       icon: Send,
+    },
+    Boolean(contacts.telegramChannel) && {
+      label: "Telegram-канал",
+      value: "Читать канал",
+      href: contacts.telegramChannel,
+      external: true,
+      icon: Megaphone,
     },
     Boolean(contacts.whatsapp) && {
       label: "WhatsApp",
@@ -53,11 +54,6 @@ function contactItems(contacts: SiteContacts): ContactItem[] {
       href: contacts.whatsapp,
       external: true,
       icon: MessageCircle,
-    },
-    Boolean(contacts.address) && {
-      label: "Адрес",
-      value: contacts.address,
-      icon: MapPin,
     },
   ];
   return items.filter((item): item is ContactItem => Boolean(item));
@@ -77,53 +73,36 @@ export function Contact({
       className="scroll-mt-24 bg-gradient-to-b from-background to-sand/40 py-20 dark:to-muted/20 md:py-28"
     >
       <Container>
-        <SectionHeading {...data.heading} />
+        <SectionHeading {...data.heading} align="center" />
 
-        <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="space-y-4">
-            {items.map((item) => {
-              const content = (
-                <>
-                  <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-[1rem] bg-accent-soft text-accent">
-                    <item.icon className="size-5" />
-                  </span>
-                  <div>
-                    <p className="text-sm text-muted-foreground">
-                      {item.label}
-                    </p>
-                    <p className="font-medium">{item.value}</p>
-                  </div>
-                </>
-              );
-              return item.href ? (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  {...(item.external
-                    ? { target: "_blank", rel: "noopener noreferrer" }
-                    : {})}
-                  className={`${cardClass} transition hover:border-accent/40`}
-                >
-                  {content}
-                </a>
-              ) : (
-                <div key={item.label} className={cardClass}>
-                  {content}
-                </div>
-              );
-            })}
-
-            <div
-              className="flex h-48 items-center justify-center rounded-[1.35rem] border border-dashed border-border bg-muted/60 text-sm text-muted-foreground"
-              role="img"
-              aria-label="Карта — заглушка"
+        <ul className="mx-auto flex max-w-5xl flex-wrap justify-center gap-4">
+          {items.map((item) => (
+            <li
+              key={item.label}
+              className="w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc((100%-2rem)/3)]"
             >
-              Карта появится здесь (Google / Yandex Maps)
-            </div>
-          </div>
-
-          <ContactForm />
-        </div>
+              <a
+                href={item.href}
+                {...(item.external
+                  ? { target: "_blank", rel: "noopener noreferrer" }
+                  : {})}
+                className="flex h-full items-center gap-4 rounded-[1.35rem] border border-border bg-card p-5 shadow-soft transition hover:-translate-y-0.5 hover:border-accent/40"
+              >
+                <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-[1rem] bg-accent-soft text-accent">
+                  <item.icon className="size-5" />
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-sm text-muted-foreground">
+                    {item.label}
+                  </span>
+                  <span className="block break-words font-medium">
+                    {item.value}
+                  </span>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
       </Container>
     </section>
   );

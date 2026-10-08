@@ -19,7 +19,11 @@ export const WEBSITE_ID = `${siteConfig.url}/#website`;
 /** Телефон, email и профили — только заполненные */
 function contactPoints(s: SiteSettings) {
   const { contacts } = s;
-  const sameAs = [contacts.telegram, contacts.whatsapp].filter(Boolean);
+  const sameAs = [
+    contacts.telegram,
+    contacts.telegramChannel,
+    contacts.whatsapp,
+  ].filter(Boolean);
   return {
     telephone: contacts.phoneHref.replace("tel:", "") || undefined,
     email: contacts.email || undefined,

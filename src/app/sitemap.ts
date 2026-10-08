@@ -52,6 +52,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
       images: article.cover ? [abs(mediaUrl(article.cover.path))] : undefined,
     })),
-    { url: abs("/privacy"), changeFrequency: "yearly", priority: 0.2 },
   ];
 }

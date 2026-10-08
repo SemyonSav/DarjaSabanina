@@ -134,8 +134,14 @@ export const blockDefinitions: Record<BlockKey, BlockDefinition> = {
       {
         type: "link",
         name: "telegram",
-        label: "Telegram",
+        label: "Telegram (личный)",
         placeholder: "https://t.me/username",
+      },
+      {
+        type: "link",
+        name: "telegramChannel",
+        label: "Telegram-канал",
+        placeholder: "https://t.me/channel",
       },
       {
         type: "link",
@@ -143,7 +149,6 @@ export const blockDefinitions: Record<BlockKey, BlockDefinition> = {
         label: "WhatsApp",
         placeholder: "https://wa.me/79001234567",
       },
-      { type: "text", name: "address", label: "Адрес" },
     ],
   },
   hero: {
@@ -232,19 +237,6 @@ export const blockDefinitions: Record<BlockKey, BlockDefinition> = {
         ],
       },
       {
-        type: "text",
-        name: "moreLabel",
-        label: "Кнопка «Подробнее»",
-        hint: "Пусто — кнопка скрыта.",
-      },
-      {
-        type: "link",
-        name: "moreHref",
-        label: "Куда ведёт «Подробнее»",
-        placeholder: "/articles/…",
-        hint: "Адрес статьи на сайте (начинается с /) или полный адрес.",
-      },
-      {
         type: "textarea",
         name: "slogan",
         label: "Слоган в зелёной карточке",
@@ -323,8 +315,7 @@ export const blockDefinitions: Record<BlockKey, BlockDefinition> = {
   },
   contact: {
     title: "Контакты",
-    description:
-      "Заголовок блока с формой заявки. Телефон, email и мессенджеры — в разделе «Контакты».",
+    description: "Заголовок и подзаголовок блока контактов.",
     fields: [heading()],
   },
 };
