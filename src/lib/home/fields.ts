@@ -237,19 +237,6 @@ export const blockDefinitions: Record<BlockKey, BlockDefinition> = {
         ],
       },
       {
-        type: "text",
-        name: "moreLabel",
-        label: "Кнопка «Подробнее»",
-        hint: "Пусто — кнопка скрыта.",
-      },
-      {
-        type: "link",
-        name: "moreHref",
-        label: "Куда ведёт «Подробнее»",
-        placeholder: "/articles/…",
-        hint: "Адрес статьи на сайте (начинается с /) или полный адрес.",
-      },
-      {
         type: "textarea",
         name: "slogan",
         label: "Слоган в зелёной карточке",

@@ -117,8 +117,6 @@ export const blockDefaults: { [K in BlockKey]: BlockInput<K> } = {
     sloganNote:
       "Индивидуальный формат. Бережный темп. Фокус на решении, а не на поиске виноватых.",
     ctaLabel: "Записаться на расстановку",
-    moreLabel: "Подробнее",
-    moreHref: "/articles/chto-takoe-sistemnye-rasstanovki",
   },
   blog: {
     heading: {

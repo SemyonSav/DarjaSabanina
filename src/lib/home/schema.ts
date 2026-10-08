@@ -53,13 +53,6 @@ const cardSchema = z.object({
   icon: z.enum(ICONS),
 });
 
-/** Ссылка: внутренний путь или полный адрес */
-const href = z
-  .string()
-  .trim()
-  .max(300)
-  .regex(/^(\/|https?:\/\/|#|$)/, "Адрес должен начинаться с / или https://");
-
 export const blockSchemas = {
   general: z.object({
     name: required(80),
@@ -109,8 +102,6 @@ export const blockSchemas = {
     slogan: line(300),
     sloganNote: richText(400),
     ctaLabel: line(60),
-    moreLabel: line(60),
-    moreHref: href,
   }),
   blog: z.object({
     heading: sectionHeadingSchema,
