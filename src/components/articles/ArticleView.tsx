@@ -4,7 +4,6 @@ import { Clock } from "lucide-react";
 import type { Article } from "@/types";
 import { formatDate } from "@/lib/utils";
 import { categoryPath } from "@/lib/paths";
-import { ButtonLink } from "@/components/ui/Button";
 import { ArticleContent } from "@/components/articles/ArticleContent";
 
 /** Статья целиком: используется на сайте и в предпросмотре админки */
@@ -50,12 +49,6 @@ export function ArticleView({ article }: { article: Article }) {
 
       <div className="mt-10">
         <ArticleContent article={article} />
-      </div>
-
-      <div className="mt-10 flex justify-center">
-        <ButtonLink href="/#contact" size="lg">
-          Записаться на консультацию
-        </ButtonLink>
       </div>
     </article>
   );
